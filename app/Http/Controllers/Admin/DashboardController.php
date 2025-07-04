@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\StudentProfile;
+use App\Models\Seat;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
+        $totalUsers = User::count();
+        $totalStudents = User::where('role', 'student')->count();
+        $totalSeats = Seat::count();
+        $vacantSeats = Seat::where('status', 'vacant')->count();
+        return view('admin.dashboard', compact('totalUsers', 'totalStudents', 'totalSeats', 'vacantSeats'));
     }
 } 
