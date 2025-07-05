@@ -116,7 +116,7 @@
                 <ul class="list-unstyled text-secondary mb-0">
                     <li><i class="bi bi-123 me-2"></i><strong>Seat Number:</strong> {{ $studentProfile->seat->number ?? 'Not Assigned' }}</li>
                     @if(!empty($studentProfile->timeslot_start))
-                        <li><i class="bi bi-clock me-2"></i><strong>Timeslot:</strong> {{ $studentProfile->timeslot_start }} - {{ $studentProfile->timeslot_end }}</li>
+                        <li><i class="bi bi-clock me-2"></i><strong>Timeslot:</strong> {{ Carbon\Carbon::parse($studentProfile->timeslot_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($studentProfile->timeslot_end)->format('h:i A') }}</li>
                     @endif
                     <li><i class="bi bi-calendar-event me-2"></i><strong>Join Date:</strong> {{ $studentProfile->joining_date }}</li>
                 </ul>
@@ -135,6 +135,7 @@
                     @php
                         $todayTimesheet = \App\Models\Timesheet::where('student_profile_id', $studentProfile->id)
                             ->where('date', now()->toDateString())
+                            ->orderBy('id', 'desc')
                             ->first();
                     @endphp
                     @if($todayTimesheet)
@@ -156,6 +157,7 @@
                     @php
                         $todayTimesheet = \App\Models\Timesheet::where('student_profile_id', $studentProfile->id)
                             ->where('date', now()->toDateString())
+                            ->orderBy('id', 'desc')
                             ->first();
                         $isCheckedIn = $todayTimesheet && $todayTimesheet->check_in;
                         $isCheckedOut = $todayTimesheet && $todayTimesheet->check_out;
@@ -164,7 +166,7 @@
                     <form method="POST" action="{{ route('student.checkin') }}" class="d-inline-block me-2">
                         @csrf
                         <button type="submit" class="btn btn-checkin btn-lg px-4" 
-                                {{ $isCheckedIn || $isCheckedOut ? 'disabled' : '' }}>
+                                {{ $isCheckedIn && !$isCheckedOut ? 'disabled' : '' }}>
                             <i class="bi bi-box-arrow-in-right me-2"></i>
                             {{ $isCheckedIn ? 'Already Checked In' : 'Check In' }}
                         </button>

@@ -13,12 +13,10 @@ class TimesheetController extends Controller
 {
     public function checkIn(Request $request)
     {
-
-        
         $studentProfile = StudentProfile::where('user_id', auth()->id())->first();
         
         if (!$studentProfile) {
-            return redirect()->back()->with('error', 'Student profile not found. Please join the library first.');
+            return redirect()->route('student.dashboard')->with('error', 'Student profile not found. Please join the library first.');
         }
 
         // Check if current time is within allowed timeslot
@@ -69,7 +67,7 @@ class TimesheetController extends Controller
         die(); */
 
         if (!$isWithinTimeslot) {
-            return redirect()->back()->with('error', 'Check-in is only allowed during your assigned timeslot: ' . 
+            return redirect()->route('student.dashboard')->with('error', 'Check-in is only allowed during your assigned timeslot: ' . 
                 $timeslotStart->format('H:i') . ' - ' . $timeslotEnd->format('H:i'));
         }
 
@@ -78,9 +76,9 @@ class TimesheetController extends Controller
             ->where('date', $currentTime->toDateString())
             ->first();
 
-        if ($todayTimesheet && $todayTimesheet->check_in) {
-            return redirect()->back()->with('error', 'You have already checked in today.');
-        }
+        /* if ($todayTimesheet && $todayTimesheet->check_in) {
+            return redirect()->route('student.dashboard')->with('error', 'You have already checked in today.');
+        } */
 
         // Get available seats
         $availableSeats = Seat::where('status', 'vacant')
@@ -88,7 +86,7 @@ class TimesheetController extends Controller
             ->get();
 
         if ($availableSeats->isEmpty()) {
-            return redirect()->back()->with('error', 'No seats are currently available. Please try again later.');
+            return redirect()->route('student.dashboard')->with('error', 'No seats are currently available. Please try again later.');
         }
 
         // If seat selection is provided
@@ -96,7 +94,7 @@ class TimesheetController extends Controller
             $selectedSeat = Seat::find($request->seat_id);
             
             if (!$selectedSeat || $selectedSeat->status !== 'vacant' || $selectedSeat->assigned_to !== null) {
-                return redirect()->back()->with('error', 'Selected seat is not available.');
+                return redirect()->route('student.dashboard')->with('error', 'Selected seat is not available.');
             }
 
             // Assign seat to student
@@ -109,7 +107,7 @@ class TimesheetController extends Controller
             $studentProfile->update(['seat_id' => $selectedSeat->id]);
 
             // Create or update timesheet
-            if (!$todayTimesheet) {
+            /* if (!$todayTimesheet) {
                 $todayTimesheet = Timesheet::create([
                     'student_profile_id' => $studentProfile->id,
                     'date' => $currentTime->toDateString(),
@@ -118,9 +116,16 @@ class TimesheetController extends Controller
                 ]);
             } else {
                 $todayTimesheet->update(['check_in' => $currentTime->toTimeString()]);
-            }
+            } */
 
-            return redirect()->back()->with('success', 'Successfully checked in and assigned to seat ' . $selectedSeat->number);
+            $todayTimesheet = Timesheet::create([
+                'student_profile_id' => $studentProfile->id,
+                'date' => $currentTime->toDateString(),
+                'check_in' => $currentTime->toTimeString(),
+                'status' => 'pending'
+            ]);
+
+            return redirect()->route('student.dashboard')->with('success', 'Successfully checked in and assigned to seat ' . $selectedSeat->number);
         }
 
         // Show seat selection view
@@ -132,7 +137,7 @@ class TimesheetController extends Controller
         $studentProfile = StudentProfile::where('user_id', auth()->id())->first();
         
         if (!$studentProfile) {
-            return redirect()->back()->with('error', 'Student profile not found.');
+            return redirect()->route('student.dashboard')->with('error', 'Student profile not found.');
         }
 
         // Check if current time is within allowed timeslot
@@ -179,21 +184,22 @@ class TimesheetController extends Controller
         }
         
         if (!$isWithinTimeslot) {
-            return redirect()->back()->with('error', 'Check-out is only allowed during your assigned timeslot: ' . 
+            return redirect()->route('student.dashboard')->with('error', 'Check-out is only allowed during your assigned timeslot: ' . 
                 $timeslotStart->format('H:i') . ' - ' . $timeslotEnd->format('H:i'));
         }
 
         // Check if checked in today
         $todayTimesheet = Timesheet::where('student_profile_id', $studentProfile->id)
             ->where('date', $currentTime->toDateString())
+            ->orderBy('id', 'desc')
             ->first();
 
         if (!$todayTimesheet || !$todayTimesheet->check_in) {
-            return redirect()->back()->with('error', 'You must check in before checking out.');
+            return redirect()->route('student.dashboard')->with('error', 'You must check in before checking out.');
         }
 
         if ($todayTimesheet->check_out) {
-            return redirect()->back()->with('error', 'You have already checked out today.');
+            return redirect()->route('student.dashboard')->with('error', 'You have already checked out today.');
         }
 
         // Update timesheet with check-out time
@@ -216,6 +222,6 @@ class TimesheetController extends Controller
             $studentProfile->update(['seat_id' => null]);
         }
 
-        return redirect()->back()->with('success', 'Successfully checked out. Your seat has been freed.');
+        return redirect()->route('student.dashboard')->with('success', 'Successfully checked out. Your seat has been freed.');
     }
 } 

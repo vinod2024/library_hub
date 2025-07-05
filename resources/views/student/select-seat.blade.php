@@ -7,19 +7,19 @@
     .seat-selection-bg {
         background-color: rgba(255, 255, 255, 0.95);
         border-radius: 15px;
-        padding: 2rem;
+        padding: 1.5rem;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
     .seat-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 1rem;
-        margin-top: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 0.5rem;
+        margin-top: 1rem;
     }
     .seat-item {
         border: 2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 1rem;
+        border-radius: 8px;
+        padding: 0.5rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -35,14 +35,14 @@
         background-color: #d4edda;
     }
     .seat-number {
-        font-size: 1.2rem;
+        font-size: 1rem;
         font-weight: bold;
         color: #495057;
     }
     .seat-status {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         color: #6c757d;
-        margin-top: 0.5rem;
+        margin-top: 0.25rem;
     }
     .timeslot-info {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -51,85 +51,120 @@
         border-radius: 10px;
         margin-bottom: 2rem;
     }
+    .debug-info {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
 </style>
 
 <script>
+    function validateAndSubmit() {
+        const selectedSeat = document.querySelector('input[name="seat_id"]:checked');
+        const form = document.getElementById('seat-selection-form');
+        if (!selectedSeat) {
+            alert('Please select a seat before confirming.');
+            return false;
+        }
+        
+        return true;
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('student-bg');
         
         // Handle seat selection
         const seatItems = document.querySelectorAll('.seat-item');
         const confirmBtn = document.getElementById('confirm-seat-btn');
-        const selectedSeatInput = document.getElementById('selected_seat_id');
+        const selectedSeatInfo = document.getElementById('selected-seat-info');
+        const selectedSeatNumber = document.getElementById('selected-seat-number');
         
-        seatItems.forEach(item => {
-            item.addEventListener('click', function() {
+        // Handle radio button changes
+        const radioButtons = document.querySelectorAll('input[name="seat_id"]');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                console.log('Radio button changed:', this.value);
+                
                 // Remove previous selection
                 seatItems.forEach(seat => seat.classList.remove('selected'));
-                // Add selection to clicked seat
-                this.classList.add('selected');
                 
-                // Update hidden input
-                selectedSeatInput.value = this.dataset.seatId;
+                // Add selection to clicked seat
+                const seatItem = this.closest('.seat-item');
+                seatItem.classList.add('selected');
                 
                 // Enable confirm button
                 confirmBtn.disabled = false;
+                
+                // Show selected seat info
+                selectedSeatInfo.style.display = 'block';
+                selectedSeatNumber.textContent = seatItem.dataset.seatNumber;
+                
+                console.log('Seat selected:', this.value, 'Number:', seatItem.dataset.seatNumber);
             });
         });
 
-        // Simple form validation
+        // Form validation and submission
         const form = document.getElementById('seat-selection-form');
         form.addEventListener('submit', function(e) {
-            console.log('Form submission event triggered');
-            console.log('Selected seat value:', selectedSeatInput.value);
-            console.log('Form method:', form.method);
-            console.log('Form action:', form.action);
+            const selectedSeat = document.querySelector('input[name="seat_id"]:checked');
             
-            if (!selectedSeatInput.value) {
+            
+            if (!selectedSeat) {
                 e.preventDefault();
                 alert('Please select a seat before confirming.');
                 return false;
             }
-            console.log('Form validation passed, submitting with seat:', selectedSeatInput.value);
+            
         });
+    });
 </script>
 
 <div class="seat-selection-bg">
     <div class="text-center mb-4">
         <h2 class="mb-3"><i class="bi bi-chair me-2"></i>Select Your Seat</h2>
-        <p class="text-muted">Choose an available seat for your library session</p>
     </div>
+    
 
     <!-- Timeslot Information -->
     <div class="timeslot-info">
         <h5><i class="bi bi-clock me-2"></i>Your Timeslot</h5>
         <p class="mb-0">
-            <strong>{{ $studentProfile->timeslot_start }}</strong> - <strong>{{ $studentProfile->timeslot_end }}</strong>
+            <strong>{{ Carbon\Carbon::parse($studentProfile->timeslot_start)->format('h:i A') }}</strong> - <strong>{{ Carbon\Carbon::parse($studentProfile->timeslot_end)->format('h:i A') }}</strong>
         </p>
-        <small>Check-in time: {{ now()->format('H:i') }}</small>
+        <small>Check-in time: {{ Carbon\Carbon::now()->format('h:i A') }}</small>
     </div>
 
     <!-- Available Seats -->
     <div class="row">
         <div class="col-12">
-            <h5 class="mb-3"><i class="bi bi-grid me-2"></i>Available Seats ({{ $availableSeats->count() }})</h5>
+            <h5 class="mb-2"><i class="bi bi-grid me-2"></i>Available Seats ({{ $availableSeats->count() }})</h5>
             
             @if($availableSeats->count() > 0)
                 <form method="POST" action="{{ route('student.checkin') }}" id="seat-selection-form">
                     @csrf
-                    <input type="hidden" name="seat_id" id="selected_seat_id" required>
                     
                     <div class="seat-grid">
                         @foreach($availableSeats as $seat)
-                            <div class="seat-item" data-seat-id="{{ $seat->id }}">
-                                <div class="seat-number">{{ $seat->number }}</div>
-                                <div class="seat-status">Available</div>
+                            <div class="seat-item" data-seat-id="{{ $seat->id }}" data-seat-number="{{ $seat->number }}">
+                                <input type="radio" name="seat_id" value="{{ $seat->id }}" id="seat_{{ $seat->id }}" style="display: none;">
+                                <label for="seat_{{ $seat->id }}" style="cursor: pointer; display: block;">
+                                    <div class="seat-number">{{ $seat->number }}</div>
+                                    <div class="seat-status">Available</div>
+                                </label>
                             </div>
                         @endforeach
                     </div>
                     
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg px-5" id="confirm-seat-btn" disabled>
+                    <div class="text-center mt-3">
+                        <div id="selected-seat-info" class="alert alert-info mb-3" style="display: none;">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <strong>Selected Seat:</strong> <span id="selected-seat-number"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg px-5" id="confirm-seat-btn" disabled onclick="return validateAndSubmit()">
                             <i class="bi bi-check-circle me-2"></i>Confirm Seat & Check In
                         </button>
                         <a href="{{ route('student.dashboard') }}" class="btn btn-secondary btn-lg px-5 ms-2">
@@ -151,8 +186,6 @@
         </div>
     </div>
 </div>
-
-
 
 <!-- Bootstrap Icons CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
