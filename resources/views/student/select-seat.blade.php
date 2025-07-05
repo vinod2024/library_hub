@@ -2,7 +2,7 @@
 @section('content')
 <style>
     body.student-bg {
-        background-color:rgb(28, 132, 166);
+        background-color:#e3f0ff;
     }
     .seat-selection-bg {
         background-color: rgba(255, 255, 255, 0.95);
