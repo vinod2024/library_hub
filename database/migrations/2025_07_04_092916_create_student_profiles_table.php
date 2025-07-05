@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('address');
             $table->string('photo')->nullable();
             $table->string('id_proof')->nullable();
-            $table->json('courses');
-            $table->string('purpose');
+            $table->json('courses')->nullable();
+            $table->string('purpose')->nullable();
             $table->time('timeslot_start');
             $table->time('timeslot_end');
             $table->date('joining_date');

@@ -10,6 +10,6 @@ class Seat extends Model
 
     public function studentProfile()
     {
-        return $this->belongsTo(StudentProfile::class, 'assigned_to');
+        return $this->belongsTo(StudentProfile::class, 'assigned_to', 'id');
     }
 }
