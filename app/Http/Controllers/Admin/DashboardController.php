@@ -16,6 +16,7 @@ class DashboardController extends Controller
         $totalStudents = User::where('role', 'student')->count();
         $totalSeats = Seat::count();
         $vacantSeats = Seat::where('status', 'vacant')->count();
-        return view('admin.dashboard', compact('totalUsers', 'totalStudents', 'totalSeats', 'vacantSeats'));
+        $vacantSeatsList = Seat::where('status', 'vacant')->orderBy('number', 'asc')->get();
+        return view('admin.dashboard', compact('totalUsers', 'totalStudents', 'totalSeats', 'vacantSeats', 'vacantSeatsList'));
     }
 } 
