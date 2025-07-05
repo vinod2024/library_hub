@@ -17,4 +17,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Admin routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+    Route::resource('seats', App\Http\Controllers\Admin\SeatController::class);
+    Route::resource('students', App\Http\Controllers\Admin\StudentController::class);
+    Route::get('reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+});
+
+// Student routes
+Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/join', [App\Http\Controllers\Student\LibraryJoinController::class, 'showForm'])->name('join.form');
+    Route::post('/join', [App\Http\Controllers\Student\LibraryJoinController::class, 'submitForm'])->name('join.submit');
+    Route::get('/profile', [App\Http\Controllers\Student\DashboardController::class, 'profile'])->name('profile');
+    Route::post('/check-in', [App\Http\Controllers\Student\TimesheetController::class, 'checkIn'])->name('checkin');
+    Route::post('/check-out', [App\Http\Controllers\Student\TimesheetController::class, 'checkOut'])->name('checkout');
+});
+
 require __DIR__.'/auth.php';
