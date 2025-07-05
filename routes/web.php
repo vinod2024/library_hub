@@ -34,6 +34,9 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('/profile', [App\Http\Controllers\Student\DashboardController::class, 'profile'])->name('profile');
     Route::post('/check-in', [App\Http\Controllers\Student\TimesheetController::class, 'checkIn'])->name('checkin');
     Route::post('/check-out', [App\Http\Controllers\Student\TimesheetController::class, 'checkOut'])->name('checkout');
+    
+ 
+    
 });
 
 require __DIR__.'/auth.php';

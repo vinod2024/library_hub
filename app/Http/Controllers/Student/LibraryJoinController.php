@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Student\JoinLibraryRequest;
 use App\Models\StudentProfile;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,22 +14,12 @@ class LibraryJoinController extends Controller
         return view('student.join');
     }
 
-    public function submitForm(Request $request)
+    public function submitForm(JoinLibraryRequest $request)
     {
-        $validated = $request->validate([
-            'mobile' => 'required|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|max:2048',
-            'id_proof' => 'nullable|file|max:2048',
-            // 'courses' => 'required|array',
-            // 'purpose' => 'required|string|max:255',
-            'timeslot_start' => 'required',
-            'timeslot_end' => 'required',
-            'joining_date' => 'required|date',
-        ]);
+        $validated = $request->validated();
 
-        $photoPath = $request->file('photo') ? $request->file('photo')->store('photos', 'public') : null;
-        $idProofPath = $request->file('id_proof') ? $request->file('id_proof')->store('id_proofs', 'public') : null;
+        $photoPath = $request->file('photo')->store('photos', 'public');
+        $idProofPath = $request->file('id_proof')->store('id_proofs', 'public');
  
         StudentProfile::create([
             'user_id' => auth()->id(),
@@ -37,8 +27,6 @@ class LibraryJoinController extends Controller
             'address' => $validated['address'],
             'photo' => $photoPath,
             'id_proof' => $idProofPath,
-            // 'courses' => $validated['courses'],
-            // 'purpose' => $validated['purpose'],
             'timeslot_start' => $validated['timeslot_start'],
             'timeslot_end' => $validated['timeslot_end'],
             'joining_date' => $validated['joining_date'],

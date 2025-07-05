@@ -1,20 +1,8 @@
 @extends('layouts.student')
 @section('content')
 <style>
-    body.student-bg {
-        background-color:rgb(28, 132, 166);
-    }
     .dashboard-bg-icon {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 0;
-        opacity: 0.08;
-        font-size: 22vw;
-        color: #1976d2;
-        pointer-events: none;
-        user-select: none;
+        
     }
     .dashboard-widgets { position: relative; z-index: 1; }
     .alert {
@@ -47,8 +35,6 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.body.classList.add('student-bg');
-        
         // Auto-hide alerts after 5 seconds
         setTimeout(function() {
             const alerts = document.querySelectorAll('.alert');
@@ -60,9 +46,7 @@
         }, 5000);
     });
 </script>
-<div class="dashboard-bg-icon">
-    <i class="bi bi-journal-bookmark"></i>
-</div>
+
 
 <!-- Success/Error Messages -->
 @if(session('success'))
@@ -100,9 +84,8 @@
                     <p class="mb-1"><span class="badge bg-info text-dark">Student</span></p>
                     <ul class="list-unstyled mb-0 text-secondary">
                         <li><i class="bi bi-telephone me-2"></i><strong>Mobile:</strong> {{ $studentProfile->mobile ?? '-' }}</li>
-                        @if(!empty($studentProfile->courses) && is_array($studentProfile->courses) && count($studentProfile->courses) > 0)
-                            <li><i class="bi bi-journal me-2"></i><strong>Courses:</strong> {{ implode(', ', $studentProfile->courses) }}</li>
-                        @endif
+                        <li><i class="bi bi-envelope me-2"></i><strong>Email:</strong> {{ $studentProfile->user->email ?? '-' }}</li>
+                        <li><i class="bi bi-paypal me-2"></i><strong>Next Pay Date:</strong> {{ Carbon\Carbon::parse($studentProfile->joining_date)->addMonth()->subDay()->format('d-m-Y') }}</li>
                     </ul>
                 </div>
             </div>
@@ -116,9 +99,9 @@
                 <ul class="list-unstyled text-secondary mb-0">
                     <li><i class="bi bi-123 me-2"></i><strong>Seat Number:</strong> {{ $studentProfile->seat->number ?? 'Not Assigned' }}</li>
                     @if(!empty($studentProfile->timeslot_start))
-                        <li><i class="bi bi-clock me-2"></i><strong>Timeslot:</strong> {{ $studentProfile->timeslot_start }} - {{ $studentProfile->timeslot_end }}</li>
+                        <li><i class="bi bi-clock me-2"></i><strong>Timeslot:</strong> {{ Carbon\Carbon::parse($studentProfile->timeslot_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($studentProfile->timeslot_end)->format('h:i A') }}</li>
                     @endif
-                    <li><i class="bi bi-calendar-event me-2"></i><strong>Join Date:</strong> {{ $studentProfile->joining_date }}</li>
+                    <li><i class="bi bi-calendar-event me-2"></i><strong>Join Date:</strong> {{ Carbon\Carbon::parse($studentProfile->joining_date)->format('d-m-Y') }}</li>
                 </ul>
             </div>
         </div>
@@ -135,6 +118,7 @@
                     @php
                         $todayTimesheet = \App\Models\Timesheet::where('student_profile_id', $studentProfile->id)
                             ->where('date', now()->toDateString())
+                            ->orderBy('id', 'desc')
                             ->first();
                     @endphp
                     @if($todayTimesheet)
@@ -156,6 +140,7 @@
                     @php
                         $todayTimesheet = \App\Models\Timesheet::where('student_profile_id', $studentProfile->id)
                             ->where('date', now()->toDateString())
+                            ->orderBy('id', 'desc')
                             ->first();
                         $isCheckedIn = $todayTimesheet && $todayTimesheet->check_in;
                         $isCheckedOut = $todayTimesheet && $todayTimesheet->check_out;
@@ -164,7 +149,7 @@
                     <form method="POST" action="{{ route('student.checkin') }}" class="d-inline-block me-2">
                         @csrf
                         <button type="submit" class="btn btn-checkin btn-lg px-4" 
-                                {{ $isCheckedIn || $isCheckedOut ? 'disabled' : '' }}>
+                                {{ $isCheckedIn && !$isCheckedOut ? 'disabled' : '' }}>
                             <i class="bi bi-box-arrow-in-right me-2"></i>
                             {{ $isCheckedIn ? 'Already Checked In' : 'Check In' }}
                         </button>
