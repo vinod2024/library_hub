@@ -14,6 +14,10 @@ class DashboardController extends Controller
             ->where('user_id', auth()->id())
             ->first();
 
+        if (!$studentProfile) {
+            return redirect()->route('student.join.form');
+        }
+
         return view('student.dashboard', compact('studentProfile'));
     }
 
