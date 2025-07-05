@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Seat;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -27,5 +28,22 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin123'), // Change this password after first login
             'role' => 'admin',
         ]);
+
+        // Create sample seats
+        for ($i = 1; $i <= 20; $i++) {
+            Seat::create([
+                'number' => 'A' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                'status' => 'vacant',
+                'assigned_to' => null,
+            ]);
+        }
+
+        for ($i = 1; $i <= 20; $i++) {
+            Seat::create([
+                'number' => 'B' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                'status' => 'vacant',
+                'assigned_to' => null,
+            ]);
+        }
     }
 }

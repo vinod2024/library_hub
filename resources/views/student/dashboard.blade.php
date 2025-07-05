@@ -17,15 +17,69 @@
         user-select: none;
     }
     .dashboard-widgets { position: relative; z-index: 1; }
+    .alert {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .btn-checkin {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-checkin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+    }
+    .btn-checkout {
+        background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-checkout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+    }
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('student-bg');
+        
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
     });
 </script>
 <div class="dashboard-bg-icon">
     <i class="bi bi-journal-bookmark"></i>
 </div>
+
+<!-- Success/Error Messages -->
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 @if($studentProfile)
 <div class="row mb-6 dashboard-widgets">
     <!-- Profile Summary Widget -->
@@ -78,15 +132,50 @@
                 <div class="mb-3 mb-md-0">
                     <h5 class="card-title mb-2"><i class="bi bi-calendar-check me-2"></i>Attendance</h5>
                     <p class="mb-0">Check in and check out within your allowed timeslot.</p>
+                    @php
+                        $todayTimesheet = \App\Models\Timesheet::where('student_profile_id', $studentProfile->id)
+                            ->where('date', now()->toDateString())
+                            ->first();
+                    @endphp
+                    @if($todayTimesheet)
+                        <div class="mt-2">
+                            @if($todayTimesheet->check_in)
+                                <span class="badge bg-success me-2">
+                                    <i class="bi bi-check-circle me-1"></i>Checked In: {{ \Carbon\Carbon::parse($todayTimesheet->check_in)->format('H:i') }}
+                                </span>
+                            @endif
+                            @if($todayTimesheet->check_out)
+                                <span class="badge bg-info">
+                                    <i class="bi bi-box-arrow-left me-1"></i>Checked Out: {{ \Carbon\Carbon::parse($todayTimesheet->check_out)->format('H:i') }}
+                                </span>
+                            @endif
+                        </div>
+                    @endif
                 </div>
                 <div>
+                    @php
+                        $todayTimesheet = \App\Models\Timesheet::where('student_profile_id', $studentProfile->id)
+                            ->where('date', now()->toDateString())
+                            ->first();
+                        $isCheckedIn = $todayTimesheet && $todayTimesheet->check_in;
+                        $isCheckedOut = $todayTimesheet && $todayTimesheet->check_out;
+                    @endphp
+                    
                     <form method="POST" action="{{ route('student.checkin') }}" class="d-inline-block me-2">
                         @csrf
-                        <button type="submit" class="btn btn-primary btn-lg px-4">Check In</button>
+                        <button type="submit" class="btn btn-checkin btn-lg px-4" 
+                                {{ $isCheckedIn || $isCheckedOut ? 'disabled' : '' }}>
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+                            {{ $isCheckedIn ? 'Already Checked In' : 'Check In' }}
+                        </button>
                     </form>
                     <form method="POST" action="{{ route('student.checkout') }}" class="d-inline-block">
                         @csrf
-                        <button type="submit" class="btn btn-primary btn-lg px-4">Check Out</button>
+                        <button type="submit" class="btn btn-checkout btn-lg px-4" 
+                                {{ !$isCheckedIn || $isCheckedOut ? 'disabled' : '' }}>
+                            <i class="bi bi-box-arrow-left me-2"></i>
+                            {{ $isCheckedOut ? 'Already Checked Out' : 'Check Out' }}
+                        </button>
                     </form>
                 </div>
             </div>
