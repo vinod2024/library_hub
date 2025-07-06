@@ -142,7 +142,7 @@
             <div class="card-body">
                 <div class="mb-2"><i class="bi bi-emoji-smile text-warning" style="font-size:2rem;"></i></div>
                 <h5 class="card-title">Vacant Seats</h5>
-                <div class="display-6 fw-bold">{{ $vacantSeats ?? '0' }}</div>
+                <div class="display-6 fw-bold" id="vacant-seats-count">{{ $vacantSeats ?? '0' }}</div>
             </div>
         </div>
     </div>
@@ -151,26 +151,37 @@
 <div class="row mb-4">
     <div class="col-12">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-grid-3x3-gap me-2"></i>Vacant Seats</h5>
+                <div class="d-flex align-items-center">
+                    <small class="text-light me-3">
+                        <i class="bi bi-circle-fill text-success" style="font-size: 0.6rem;"></i> 
+                        Auto-refresh enabled
+                    </small>
+                    <button class="btn btn-sm btn-outline-light" onclick="refreshVacantSeats()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
             </div>
             <div class="card-body">
-                <div class="row g-1">
-                    @foreach($vacantSeatsList ?? [] as $seat)
-                    <div class="col-md-1 col-sm-1 col-2 col-3">
-                        <div class="card border-success text-center" style="min-height: 40px;">
-                            <div class="card-body py-1 px-0">
-                                <div class="fw-bold text-success" style="font-size: 0.9rem;">{{ $seat->number }}</div>
+                <div id="vacant-seats-content">
+                    <div class="row g-1">
+                        @foreach($vacantSeatsList ?? [] as $seat)
+                        <div class="col-md-1 col-sm-1 col-2 col-3">
+                            <div class="card border-success text-center" style="min-height: 40px;">
+                                <div class="card-body py-1 px-0">
+                                    <div class="fw-bold text-success" style="font-size: 0.9rem;">{{ $seat->number }}</div>
+                                </div>
                             </div>
                         </div>
+                        @endforeach
+                        @if(empty($vacantSeatsList))
+                        <div class="col-12 text-center text-muted">
+                            <i class="bi bi-inbox" style="font-size:1.5rem;"></i>
+                            <p class="mt-1 mb-0">No vacant seats</p>
+                        </div>
+                        @endif
                     </div>
-                    @endforeach
-                    @if(empty($vacantSeatsList))
-                    <div class="col-12 text-center text-muted">
-                        <i class="bi bi-inbox" style="font-size:1.5rem;"></i>
-                        <p class="mt-1 mb-0">No vacant seats</p>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -241,9 +252,88 @@
 
 <script>
 let overstayCheckInterval;
+let vacantSeatsCheckInterval;
 let lastOverstayCount = 0;
 let alertSound;
 let hasShownAlert = false;
+
+// Function to fetch vacant seats data
+async function fetchVacantSeats() {
+    try {
+        // Show loading state
+        const refreshBtn = document.querySelector('button[onclick="refreshVacantSeats()"]');
+        if (refreshBtn) {
+            const originalContent = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Refreshing...';
+            refreshBtn.disabled = true;
+            
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalContent;
+                refreshBtn.disabled = false;
+            }, 1000);
+        }
+        
+        const response = await fetch('{{ route("admin.vacant-seats.api") }}');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateVacantSeatsDisplay(data.data.vacantSeats, data.data.vacantSeatsList);
+        }
+    } catch (error) {
+        console.error('Error fetching vacant seats data:', error);
+    }
+}
+
+// Function to update vacant seats display
+function updateVacantSeatsDisplay(vacantSeatsCount, vacantSeatsList) {
+    const contentDiv = document.getElementById('vacant-seats-content');
+    
+    // Add a subtle fade effect
+    contentDiv.style.opacity = '0.7';
+    contentDiv.style.transition = 'opacity 0.3s ease';
+    
+    setTimeout(() => {
+        if (vacantSeatsCount === 0) {
+            contentDiv.innerHTML = `
+                <div class="row g-1">
+                    <div class="col-12 text-center text-muted">
+                        <i class="bi bi-inbox" style="font-size:1.5rem;"></i>
+                        <p class="mt-1 mb-0">No vacant seats</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            let seatsHtml = '<div class="row g-1">';
+            vacantSeatsList.forEach(seat => {
+                seatsHtml += `
+                    <div class="col-md-1 col-sm-1 col-2 col-3">
+                        <div class="card border-success text-center" style="min-height: 40px;">
+                            <div class="card-body py-1 px-0">
+                                <div class="fw-bold text-success" style="font-size: 0.9rem;">${seat.number}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            seatsHtml += '</div>';
+            contentDiv.innerHTML = seatsHtml;
+        }
+        
+        // Restore opacity
+        contentDiv.style.opacity = '1';
+        
+        // Update the count in the stats widget
+        const countElement = document.getElementById('vacant-seats-count');
+        if (countElement) {
+            countElement.textContent = vacantSeatsCount;
+        }
+    }, 150);
+}
+
+// Function to refresh vacant seats manually
+function refreshVacantSeats() {
+    fetchVacantSeats();
+}
 
 // Function to fetch overstay data
 async function fetchOverstays() {
@@ -536,8 +626,9 @@ async function executeCheckOut() {
             // Show success notification
             showSuccessNotification(`${studentName} has been successfully checked out at ${data.check_out_time}`);
             
-            // Refresh the overstay list immediately
+            // Refresh the overstay list and vacant seats immediately
             fetchOverstays();
+            fetchVacantSeats();
         } else {
             showErrorNotification(data.message || 'Error processing check-out');
         }
@@ -616,14 +707,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial fetch
     fetchOverstays();
+    fetchVacantSeats();
     
     // Set up periodic checking (every 10 seconds for more responsive alerts)
     overstayCheckInterval = setInterval(fetchOverstays, 10000);
+    // vacantSeatsCheckInterval = setInterval(fetchVacantSeats, 5000); // Refresh vacant seats every 5 seconds
     
     // Also check immediately when the page becomes visible (when user switches tabs back)
     document.addEventListener('visibilitychange', function() {
         if (!document.hidden) {
             fetchOverstays();
+            fetchVacantSeats();
         }
     });
 });
@@ -632,6 +726,9 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('beforeunload', function() {
     if (overstayCheckInterval) {
         clearInterval(overstayCheckInterval);
+    }
+    if (vacantSeatsCheckInterval) {
+        clearInterval(vacantSeatsCheckInterval);
     }
 });
 </script>
