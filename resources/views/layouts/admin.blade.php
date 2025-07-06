@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Panel - @yield('title', 'Dashboard')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -114,5 +115,63 @@
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Global Overstay Monitoring Script -->
+    <script>
+    // Global overstay monitoring for all admin pages
+    let globalOverstayCount = 0;
+    let globalOverstayInterval;
+    
+    async function checkGlobalOverstays() {
+        try {
+            const response = await fetch('{{ route("admin.overstays.api") }}');
+            const data = await response.json();
+            
+            if (data.success) {
+                globalOverstayCount = data.count;
+                updateGlobalOverstayIndicator();
+            }
+        } catch (error) {
+            console.error('Error checking global overstays:', error);
+        }
+    }
+    
+    function updateGlobalOverstayIndicator() {
+        // Update the dashboard link with overstay count
+        const dashboardLink = document.querySelector('a[href="{{ route("admin.dashboard") }}"]');
+        if (dashboardLink) {
+            // Remove existing badge
+            const existingBadge = dashboardLink.querySelector('.overstay-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            // Add new badge if there are overstays
+            if (globalOverstayCount > 0) {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-danger overstay-badge ms-1';
+                badge.textContent = globalOverstayCount;
+                badge.style.fontSize = '0.7rem';
+                dashboardLink.appendChild(badge);
+            }
+        }
+    }
+    
+    // Initialize global overstay monitoring
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initial check
+        checkGlobalOverstays();
+        
+        // Set up periodic checking (every 60 seconds for global monitoring)
+        globalOverstayInterval = setInterval(checkGlobalOverstays, 60000);
+    });
+    
+    // Clean up interval when page is unloaded
+    window.addEventListener('beforeunload', function() {
+        if (globalOverstayInterval) {
+            clearInterval(globalOverstayInterval);
+        }
+    });
+    </script>
 </body>
 </html> 
