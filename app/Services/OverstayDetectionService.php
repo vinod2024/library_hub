@@ -10,7 +10,7 @@ class OverstayDetectionService
 {
     public function getOverstayingStudents()
     {
-        $currentTime = Carbon::now();
+        $currentTime = Carbon::now()->addMinutes(1);
         $today = $currentTime->toDateString();
         
         // Get all students who are currently checked in but haven't checked out
@@ -93,8 +93,8 @@ class OverstayDetectionService
                     'student_id' => $studentProfile->id,
                     'user_name' => $studentProfile->user->name,
                     'seat_number' => $studentProfile->seat ? $studentProfile->seat->number : 'N/A',
-                    'timeslot_start' => $studentProfile->timeslot_start,
-                    'timeslot_end' => $studentProfile->timeslot_end,
+                    'timeslot_start' => Carbon::parse($studentProfile->timeslot_start)->format('h:i A'),
+                    'timeslot_end' => Carbon::parse($studentProfile->timeslot_end)->format('h:i A'),
                     'check_in_time' => $timesheet->check_in,
                     'overstay_minutes' => $overstayMinutes,
                     'overstay_duration' => $this->formatDuration($overstayMinutes)
@@ -107,6 +107,7 @@ class OverstayDetectionService
     
     private function formatDuration($minutes)
     {
+        $minutes = round($minutes);
         if ($minutes < 60) {
             return $minutes . ' minutes';
         }
