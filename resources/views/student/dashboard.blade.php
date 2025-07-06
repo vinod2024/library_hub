@@ -67,32 +67,33 @@
 @if($studentProfile)
 <div class="row mb-6 dashboard-widgets">
     <!-- Profile Summary Widget -->
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 mb-2">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body d-flex align-items-center">
                 <div class="me-4">
                     @if($studentProfile->photo)
-                        <img src="{{ asset('storage/' . $studentProfile->photo) }}" alt="Profile Photo" class="rounded-circle border" style="width:70px;height:70px;object-fit:cover;">
+                        <img src="{{ asset('storage/' . $studentProfile->photo) }}" alt="Profile Photo" class=" border" style="width: 120px;height: 140px;object-fit:cover;object-fit:cover;">
                     @else
                         <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:70px;height:70px;font-size:2rem;">
                             <i class="bi bi-person-circle"></i>
                         </div>
                     @endif
                 </div>
+
                 <div>
-                    <h4 class="card-title mb-1">{{ $studentProfile->user->name ?? '-' }}</h4>
-                    <p class="mb-1"><span class="badge bg-info text-dark">Student</span></p>
+                    <h4 class="card-title mb-1">{{ ucwords($studentProfile->user->name) ?? '-' }}</h4>
+                    <!-- <p class="mb-1"><span class="badge bg-info text-dark">Student</span></p> -->
                     <ul class="list-unstyled mb-0 text-secondary">
-                        <li><i class="bi bi-telephone me-2"></i><strong>Mobile:</strong> {{ $studentProfile->mobile ?? '-' }}</li>
-                        <li><i class="bi bi-envelope me-2"></i><strong>Email:</strong> {{ $studentProfile->user->email ?? '-' }}</li>
-                        <li><i class="bi bi-paypal me-2"></i><strong>Next Pay Date:</strong> {{ Carbon\Carbon::parse($studentProfile->joining_date)->addMonth()->subDay()->format('d-m-Y') }}</li>
+                        <li><i class="bi bi-telephone me-2"></i> {{ $studentProfile->mobile ?? '-' }}</li>
+                        <li><i class="bi bi-envelope me-2"></i> {{ $studentProfile->user->email ?? '-' }}</li>
+                        <li><i class="bi bi-paypal me-2"></i> {{ Carbon\Carbon::parse($studentProfile->joining_date)->addMonth()->subDay()->format('d-m-Y') }}</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
     <!-- Seat Info Widget -->
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 mb-2">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
                 <h5 class="card-title mb-3"><i class="bi bi-chair me-2"></i>Seat Information</h5>

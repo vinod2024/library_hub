@@ -45,6 +45,7 @@
             font-weight: bold;
             font-size: 1.3rem;
             letter-spacing: 1px;
+            color: #fff;
         }
     </style>
 </head>
@@ -59,7 +60,7 @@
                     <path d="M10 30V12a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v18" stroke="#1976d2" stroke-width="2" fill="none"/>
                     <rect x="14" y="16" width="12" height="8" rx="2" fill="#1976d2"/>
                 </svg>
-                Library Student
+                Newton Library
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#studentNavbar" aria-controls="studentNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
