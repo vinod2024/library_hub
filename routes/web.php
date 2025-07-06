@@ -24,6 +24,25 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('seats', App\Http\Controllers\Admin\SeatController::class);
     Route::resource('students', App\Http\Controllers\Admin\StudentController::class);
     Route::get('reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    
+    // Overstay API routes
+    Route::get('/overstays', [App\Http\Controllers\Admin\OverstayController::class, 'getOverstayingStudents'])->name('overstays.api');
+    Route::post('/overstays/checkout', [App\Http\Controllers\Admin\OverstayController::class, 'forceCheckOut'])->name('overstays.checkout');
+    
+    // Vacant seats API route
+    Route::get('/vacant-seats', [App\Http\Controllers\Admin\DashboardController::class, 'getVacantSeats'])->name('vacant-seats.api');
+    
+    // Test route for overstay functionality (remove in production)
+    Route::get('/test-overstay', function() {
+        $overstayService = new \App\Services\OverstayDetectionService();
+        $overstays = $overstayService->getOverstayingStudents();
+        return response()->json([
+            'overstays' => $overstays,
+            'count' => count($overstays),
+            'current_time' => now()->format('H:i:s'),
+            'today' => now()->toDateString()
+        ]);
+    })->name('test.overstay');
 });
 
 // Student routes

@@ -183,10 +183,10 @@ class TimesheetController extends Controller
             $isWithinTimeslot = ($currentTimeMinutes >= $startTimeMinutes && $currentTimeMinutes <= $endTimeMinutes);
         }
         
-        if (!$isWithinTimeslot) {
+        /* if (!$isWithinTimeslot) {
             return redirect()->route('student.dashboard')->with('error', 'Check-out is only allowed during your assigned timeslot: ' . 
                 $timeslotStart->format('H:i') . ' - ' . $timeslotEnd->format('H:i'));
-        }
+        } */
 
         // Check if checked in today
         $todayTimesheet = Timesheet::where('student_profile_id', $studentProfile->id)
