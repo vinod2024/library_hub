@@ -4,7 +4,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return redirect()->route('login');
+
 });
 
 Route::get('/dashboard', function () {
@@ -32,17 +34,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Vacant seats API route
     Route::get('/vacant-seats', [App\Http\Controllers\Admin\DashboardController::class, 'getVacantSeats'])->name('vacant-seats.api');
     
-    // Test route for overstay functionality (remove in production)
-    Route::get('/test-overstay', function() {
-        $overstayService = new \App\Services\OverstayDetectionService();
-        $overstays = $overstayService->getOverstayingStudents();
-        return response()->json([
-            'overstays' => $overstays,
-            'count' => count($overstays),
-            'current_time' => now()->format('H:i:s'),
-            'today' => now()->toDateString()
-        ]);
-    })->name('test.overstay');
+    
 });
 
 // Student routes
