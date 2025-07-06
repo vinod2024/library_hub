@@ -154,10 +154,7 @@
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-grid-3x3-gap me-2"></i>Vacant Seats</h5>
                 <div class="d-flex align-items-center">
-                    <small class="text-light me-3">
-                        <i class="bi bi-circle-fill text-success" style="font-size: 0.6rem;"></i> 
-                        Auto-refresh enabled
-                    </small>
+                    
                     <button class="btn btn-sm btn-outline-light" onclick="refreshVacantSeats()">
                         <i class="bi bi-arrow-clockwise"></i> Refresh
                     </button>
