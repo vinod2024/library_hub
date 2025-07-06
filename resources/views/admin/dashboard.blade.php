@@ -199,9 +199,9 @@
                         <span class="ms-2 text-light">| Last updated: <span id="last-updated-time">-</span></span>
                     </small>
                 </h5>
-                <button class="btn btn-sm btn-outline-light" onclick="refreshOverstays()">
+                <!-- <button class="btn btn-sm btn-outline-light" onclick="refreshOverstays()">
                     <i class="bi bi-arrow-clockwise"></i> Refresh
-                </button>
+                </button> -->
             </div>
             <div class="card-body">
                 <div id="overstay-content">
@@ -407,10 +407,8 @@ function updateOverstayDisplay(overstays, count) {
                             </small>
                         </div>
                         <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-outline-danger" onclick="sendReminder(${student.student_id})" title="Send Reminder">
-                                <i class="bi bi-bell"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-warning" onclick="forceCheckOut(${student.student_id}, '${student.user_name}')" title="Force Check-out">
+                            
+                            <button class="btn btn-sm btn-outline-danger" onclick="forceCheckOut(${student.student_id}, '${student.user_name}')" title="Force Check-out">
                                 <i class="bi bi-box-arrow-left"></i>
                             </button>
                         </div>
