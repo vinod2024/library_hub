@@ -34,8 +34,10 @@
                 <input type="time" class="form-control" id="timeslot_end" name="timeslot_end" value="{{ old('timeslot_end', $student->timeslot_end) }}" required>
             </div>
         </div>
-        <button type="submit" class="btn btn-success">Update Student</button>
-        <a href="{{ route('admin.students.index') }}" class="btn btn-secondary ms-2">Cancel</a>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success btn-sm">Update Student</button>
+            <a href="{{ route('admin.students.index') }}" class="btn btn-secondary btn-sm ms-2">Cancel</a>
+        </div>
     </form>
 </div>
 @endsection 
