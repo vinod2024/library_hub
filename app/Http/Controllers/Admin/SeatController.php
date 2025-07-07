@@ -26,7 +26,25 @@ class SeatController extends Controller
         return redirect()->route('admin.seats.index')->with('success', 'Seat added successfully.');
     }
     public function show($id) {}
-    public function edit($id) {}
-    public function update(Request $request, $id) {}
-    public function destroy($id) {}
+    public function edit($id)
+    {
+        $seat = Seat::findOrFail($id);
+        return view('admin.seats.edit', compact('seat'));
+    }
+    public function update(Request $request, $id)
+    {
+        $seat = Seat::findOrFail($id);
+        $validated = $request->validate([
+            'number' => 'required|string|unique:seats,number,' . $seat->id,
+            'status' => 'required|in:vacant,occupied',
+        ]);
+        $seat->update($validated);
+        return redirect()->route('admin.seats.index')->with('success', 'Seat updated successfully.');
+    }
+    public function destroy($id)
+    {
+        $seat = Seat::findOrFail($id);
+        $seat->delete();
+        return redirect()->route('admin.seats.index')->with('success', 'Seat deleted successfully.');
+    }
 } 
