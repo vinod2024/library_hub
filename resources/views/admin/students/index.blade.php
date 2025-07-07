@@ -1,32 +1,43 @@
 @extends('layouts.admin')
 @section('content')
-<h1>Students</h1>
-<table class="min-w-full bg-white">
-    <thead>
+<h1 class="mb-4">Students</h1>
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered align-middle bg-white">
+    <thead class="table-primary">
         <tr>
-            <th class="py-2 px-4 border-b">ID</th>
-            <th class="py-2 px-4 border-b">Name</th>
-            <th class="py-2 px-4 border-b">Mobile</th>
-            <th class="py-2 px-4 border-b">Seat</th>
-            <th class="py-2 px-4 border-b">Timeslot</th>
-            <th class="py-2 px-4 border-b">Actions</th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Mobile</th>
+            <th scope="col">Seat</th>
+            <th scope="col">Timeslot</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach($students as $student)
         <tr>
-            <td class="py-2 px-4 border-b">{{ $student->id }}</td>
-            <td class="py-2 px-4 border-b">{{ $student->user->name ?? 'N/A' }}</td>
-            <td class="py-2 px-4 border-b">{{ $student->mobile }}</td>
-            <td class="py-2 px-4 border-b">{{ $student->seat->number ?? 'Unassigned' }}</td>
-            <td class="py-2 px-4 border-b">{{ $student->timeslot_start }} - {{ $student->timeslot_end }}</td>
-            <td class="py-2 px-4 border-b">
-                <!-- Actions: Edit/Delete buttons -->
-                <a href="#" class="text-blue-600">Edit</a> |
-                <a href="#" class="text-red-600">Delete</a>
+            <td>{{ $student->id }}</td>
+            <td>{{ $student->user->name ?? 'N/A' }}</td>
+            <td>{{ $student->mobile }}</td>
+            <td>{{ $student->seat->number ?? 'Unassigned' }}</td>
+            <td>{{ $student->timeslot_start }} - {{ $student->timeslot_end }}</td>
+            <td>
+                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
+                <form action="{{ route('admin.students.destroy', $student->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
             </td>
         </tr>
         @endforeach
     </tbody>
 </table>
+</div>
 @endsection 
