@@ -1,0 +1,41 @@
+@extends('layouts.admin')
+@section('content')
+<div class="container">
+    <h1 class="mb-4">Edit Student</h1>
+    <form action="{{ route('admin.students.update', $student->id) }}" method="POST" class="card p-4 shadow-sm">
+        @csrf
+        @method('PUT')
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $student->user->name ?? '') }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="mobile" class="form-label">Mobile</label>
+            <input type="text" class="form-control" id="mobile" name="mobile" value="{{ old('mobile', $student->mobile) }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="seat_id" class="form-label">Seat</label>
+            <select class="form-select" id="seat_id" name="seat_id">
+                <option value="">Unassigned</option>
+                @foreach($seats as $seat)
+                    <option value="{{ $seat->id }}" {{ $student->seat && $student->seat->id == $seat->id ? 'selected' : '' }}>
+                        {{ $seat->number }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3 row">
+            <div class="col">
+                <label for="timeslot_start" class="form-label">Timeslot Start</label>
+                <input type="time" class="form-control" id="timeslot_start" name="timeslot_start" value="{{ old('timeslot_start', $student->timeslot_start) }}" required>
+            </div>
+            <div class="col">
+                <label for="timeslot_end" class="form-label">Timeslot End</label>
+                <input type="time" class="form-control" id="timeslot_end" name="timeslot_end" value="{{ old('timeslot_end', $student->timeslot_end) }}" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Update Student</button>
+        <a href="{{ route('admin.students.index') }}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+@endsection 

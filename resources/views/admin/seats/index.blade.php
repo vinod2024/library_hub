@@ -1,39 +1,39 @@
 @extends('layouts.admin')
 @section('content')
+<h1 class="mb-4">Seats</h1>
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-<h1>Seats</h1>
 <a href="{{ route('admin.seats.create') }}" class="btn btn-success mb-3">Add Seat</a>
-<table class="min-w-full bg-white">
-    <thead>
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered align-middle bg-white">
+    <thead class="table-primary">
         <tr>
-            <th class="py-2 px-4 border-b">ID</th>
-            <th class="py-2 px-4 border-b">Number</th>
-            <th class="py-2 px-4 border-b">Status</th>
-            <th class="py-2 px-4 border-b">Assigned To</th>
-            <th class="py-2 px-4 border-b">Actions</th>
+            <th scope="col">ID</th>
+            <th scope="col">Number</th>
+            <th scope="col">Status</th>
+            <th scope="col">Assigned To</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach($seats as $seat)
         <tr>
-            <td class="py-2 px-4 border-b">{{ $seat->id }}</td>
-            <td class="py-2 px-4 border-b">{{ $seat->number }}</td>
-            <td class="py-2 px-4 border-b">{{ ucfirst($seat->status) }}</td>
-            <td class="py-2 px-4 border-b">
+            <td>{{ $seat->id }}</td>
+            <td>{{ $seat->number }}</td>
+            <td>{{ ucfirst($seat->status) }}</td>
+            <td>
                 @if($seat->studentProfile)
                     {{ $seat->studentProfile->user->name ?? 'N/A' }}
                 @else
                     Vacant
                 @endif
             </td>
-            <td class="py-2 px-4 border-b">
-                <!-- Actions: Edit/Delete buttons -->
-                <a href="{{ route('admin.seats.edit', $seat->id) }}" class="btn btn-sm btn-primary">Edit</a>
+            <td>
+                <a href="{{ route('admin.seats.edit', $seat->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                 <form action="{{ route('admin.seats.destroy', $seat->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this seat?');">
                     @csrf
                     @method('DELETE')
@@ -44,4 +44,5 @@
         @endforeach
     </tbody>
 </table>
+</div>
 @endsection 
