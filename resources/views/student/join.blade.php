@@ -143,8 +143,8 @@
                     </button>
                     <div class="file-requirements">
                         Accepted formats: JPEG, PNG, JPG<br>
-                        Max size: 2MB<br>
-                        Dimensions: 200x200 to 2000x2000 pixels
+                        Max size: 5MB<br>
+                        Dimensions: max 2000x2000 pixels
                     </div>
                     <div id="photoPreview"></div>
                     <div id="photoValidation"></div>
@@ -164,7 +164,7 @@
                     </button>
                     <div class="file-requirements">
                         Accepted formats: JPEG, PNG, JPG, PDF<br>
-                        Max size: 2MB
+                        Max size: 5MB
                     </div>
                     <div id="idProofPreview"></div>
                     <div id="idProofValidation"></div>
@@ -211,7 +211,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Set minimum date for joining_date to today
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('joining_date').min = today;
+    // document.getElementById('joining_date').min = today;
     
     let isPhotoValid = false;
 
@@ -236,16 +236,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Check file size (2MB = 2 * 1024 * 1024 bytes)
-        if (file.size > 2 * 1024 * 1024) {
-            validation.innerHTML = '<div class="validation-error">File size must not exceed 2MB</div>';
+        if (file.size > 5 * 1024 * 1024) {
+            validation.innerHTML = '<div class="validation-error">File size must not exceed 4.5MB</div>';
             return false;
         }
         
         // Check image dimensions (async)
         const img = new Image();
         img.onload = function() {
-            if (parseInt(this.width) > 1500 || parseInt(this.height) > 1500 ) {
-                validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 1500x1500 pixels</div>';
+            if (parseInt(this.width) > 2000 || parseInt(this.height) > 2000 ) {
+                validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 2000x2000 pixels</div>';
                 container.classList.remove('has-file');
                 preview.innerHTML = '';
                 isPhotoValid = false;
@@ -293,8 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Check file size (2MB = 2 * 1024 * 1024 bytes)
-        if (file.size > 2 * 1024 * 1024) {
-            validation.innerHTML = '<div class="validation-error">File size must not exceed 2MB</div>';
+        if (file.size > 5 * 1024 * 1024) {
+            validation.innerHTML = '<div class="validation-error">File size must not exceed 5MB</div>';
             return false;
         }
         

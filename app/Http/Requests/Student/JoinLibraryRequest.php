@@ -24,8 +24,8 @@ class JoinLibraryRequest extends FormRequest
         return [
             'mobile' => 'required|string|max:20|regex:/^[0-9+\-\s()]+$/',
             'address' => 'required|string|max:255',
-            'photo' => 'required|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=1500,max_height=1500',
-            'id_proof' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'photo' => 'required|image|mimes:jpeg,png,jpg|max:10500|dimensions:max_width=2000,max_height=2000',
+            'id_proof' => 'required|file|mimes:jpeg,png,jpg,pdf|max:10500',
             'timeslot_start' => 'required|date_format:H:i',
             'timeslot_end' => 'required|date_format:H:i|after:timeslot_start',
             'joining_date' => 'required|date',
@@ -48,13 +48,13 @@ class JoinLibraryRequest extends FormRequest
             'photo.required' => 'A photo is required for library membership.',
             'photo.image' => 'The photo must be a valid image file.',
             'photo.mimes' => 'The photo must be a JPEG, PNG, or JPG file.',
-            'photo.max' => 'The photo size must not exceed 2MB.',
-            'photo.dimensions' => 'The photo dimensions must be less than  1500x1500 pixels.',
+            'photo.max' => 'The photo size must not exceed 4.5MB.',
+            'photo.dimensions' => 'The photo dimensions must be less than  2000x2000 pixels.',
             
             'id_proof.required' => 'An ID proof document is required for library membership.',
             'id_proof.file' => 'The ID proof must be a valid file.',
             'id_proof.mimes' => 'The ID proof must be a JPEG, PNG, JPG, or PDF file.',
-            'id_proof.max' => 'The ID proof file size must not exceed 2MB.',
+            'id_proof.max' => 'The ID proof file size must not exceed 4.5MB.',
             
             'timeslot_start.required' => 'Start time is required.',
             'timeslot_start.date_format' => 'Please enter a valid time format.',
