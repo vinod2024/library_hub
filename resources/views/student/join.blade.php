@@ -215,6 +215,44 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let isPhotoValid = false;
 
+    // --- Add image resize helper ---
+    function resizeImage(file, maxWidth, maxHeight, callback) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+                // Calculate new dimensions
+                if (width > maxWidth || height > maxHeight) {
+                    if (width / height > maxWidth / maxHeight) {
+                        height = Math.round(height * (maxWidth / width));
+                        width = maxWidth;
+                    } else {
+                        width = Math.round(width * (maxHeight / height));
+                        height = maxHeight;
+                    }
+                }
+                // Create canvas and draw image
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                // Convert canvas to Blob
+                canvas.toBlob(function(blob) {
+                    // Create a new File object
+                    const resizedFile = new File([blob], file.name, { type: file.type });
+                    callback(resizedFile, canvas.toDataURL(file.type));
+                }, file.type, 0.95); // 0.95 quality
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+    // --- End image resize helper ---
+
+    // --- Update validatePhoto to use resizeImage ---
     function validatePhoto(file) {
         const container = document.getElementById('photoContainer');
         const validation = document.getElementById('photoValidation');
@@ -235,41 +273,38 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        // Check file size (2MB = 2 * 1024 * 1024 bytes)
+        // Check file size (5MB = 5 * 1024 * 1024 bytes)
         if (file.size > 5 * 1024 * 1024) {
-            validation.innerHTML = '<div class="validation-error">File size must not exceed 4.5MB</div>';
+            validation.innerHTML = '<div class="validation-error">File size must not exceed 5MB</div>';
             return false;
         }
-        
-        // Check image dimensions (async)
-        const img = new Image();
-        img.onload = function() {
-            if (parseInt(this.width) > 2000 || parseInt(this.height) > 2000 ) {
-                validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 2000x2000 pixels</div>';
-                container.classList.remove('has-file');
-                preview.innerHTML = '';
-                isPhotoValid = false;
-            } else {
-                validation.innerHTML = '<div class="validation-success">✓ Photo validated successfully</div>';
-                container.classList.add('has-file');
-                // Show preview only if valid
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.innerHTML = `<img src="${e.target.result}" class="file-preview" alt="Photo preview">`;
-                };
-                reader.readAsDataURL(file);
-                isPhotoValid = true;
-            }
-        };
-        img.onerror = function() {
-            validation.innerHTML = '<div class="validation-error">Could not load image for validation</div>';
-            isPhotoValid = false;
-        };
-        img.src = URL.createObjectURL(file);
-        
-        // Do not show preview here; only after dimension check
+
+        // Resize image before preview and validation
+        resizeImage(file, 200, 280, function(resizedFile, dataUrl) {
+            // Check dimensions again (should be <= 2000x2000)
+            const img = new Image();
+            img.onload = function() {
+                if (this.width > 2000 || this.height > 2000) {
+                    validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 2000x2000 pixels</div>';
+                    container.classList.remove('has-file');
+                    preview.innerHTML = '';
+                    isPhotoValid = false;
+                } else {
+                    validation.innerHTML = '<div class="validation-success">✓ Photo validated and resized successfully</div>';
+                    container.classList.add('has-file');
+                    preview.innerHTML = `<img src="${dataUrl}" class="file-preview" alt="Photo preview">`;
+                    isPhotoValid = true;
+                    // Replace the file in the input with the resized file
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(resizedFile);
+                    document.getElementById('photo').files = dataTransfer.files;
+                }
+            };
+            img.src = dataUrl;
+        });
         return true;
     }
+    // --- End update validatePhoto ---
     
     function validateIdProof(file) {
         const container = document.getElementById('idProofContainer');
