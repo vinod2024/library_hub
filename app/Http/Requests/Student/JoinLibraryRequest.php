@@ -24,7 +24,7 @@ class JoinLibraryRequest extends FormRequest
         return [
             'mobile' => 'required|string|max:20|regex:/^[0-9+\-\s()]+$/',
             'address' => 'required|string|max:255',
-            'photo' => 'required|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=1000,max_height=1000',
+            'photo' => 'required|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=1500,max_height=1500',
             'id_proof' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'timeslot_start' => 'required|date_format:H:i',
             'timeslot_end' => 'required|date_format:H:i|after:timeslot_start',
@@ -49,7 +49,7 @@ class JoinLibraryRequest extends FormRequest
             'photo.image' => 'The photo must be a valid image file.',
             'photo.mimes' => 'The photo must be a JPEG, PNG, or JPG file.',
             'photo.max' => 'The photo size must not exceed 2MB.',
-            'photo.dimensions' => 'The photo dimensions must be less than  1000x1000 pixels.',
+            'photo.dimensions' => 'The photo dimensions must be less than  1500x1500 pixels.',
             
             'id_proof.required' => 'An ID proof document is required for library membership.',
             'id_proof.file' => 'The ID proof must be a valid file.',
