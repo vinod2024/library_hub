@@ -155,7 +155,7 @@
                 <h5 class="mb-0"><i class="bi bi-grid-3x3-gap me-2"></i>Vacant Seats</h5>
                 <div class="d-flex align-items-center">
                     
-                    <button class="btn btn-sm btn-outline-dark" onclick="refreshVacantSeats()">
+                    <button class="btn btn-sm btn-outline-dark" onclick="fetchVacantSeats()">
                         <i class="bi bi-arrow-clockwise"></i> Refresh
                     </button>
                 </div>
@@ -296,7 +296,7 @@ let hasShownAlert = false;
 async function fetchVacantSeats() {
     try {
         // Show loading state
-        const refreshBtn = document.querySelector('button[onclick="refreshVacantSeats()"]');
+        const refreshBtn = document.querySelector('button[onclick="fetchVacantSeats()"]');
         if (refreshBtn) {
             const originalContent = refreshBtn.innerHTML;
             refreshBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Refreshing...';
