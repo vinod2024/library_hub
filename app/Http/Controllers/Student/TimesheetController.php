@@ -83,6 +83,7 @@ class TimesheetController extends Controller
         // Get available seats
         $availableSeats = Seat::where('status', 'vacant')
             ->whereNull('assigned_to')
+            ->where('is_reserved', 0)
             ->get();
 
         if ($availableSeats->isEmpty()) {
