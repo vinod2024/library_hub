@@ -15,21 +15,33 @@ class DashboardController extends Controller
         $totalUsers = User::count();
         $totalStudents = User::where('role', 'student')->count();
         $totalSeats = Seat::count();
-        $vacantSeats = Seat::where('status', 'vacant')->count();
-        $vacantSeatsList = Seat::where('status', 'vacant')->orderBy('number', 'asc')->get();
-        return view('admin.dashboard', compact('totalUsers', 'totalStudents', 'totalSeats', 'vacantSeats', 'vacantSeatsList'));
+        $vacantSeats = Seat::where('status', 'vacant')->where('is_reserved', '0')->count();
+        $vacantSeatsList = Seat::where('status', 'vacant')->where('is_reserved', 0)->orderBy('number', 'asc')->get();
+        // Group by first letter
+        $groupedVacantSeats = $vacantSeatsList->groupBy(function($seat) {
+            return strtoupper(substr($seat->number, 0, 1));
+        });
+        // Reserved seats block
+        $reservedSeatsList = Seat::where('is_reserved', 1)->orderBy('number', 'asc')->get();
+        $groupedReservedSeats = $reservedSeatsList->groupBy(function($seat) {
+            return strtoupper(substr($seat->number, 0, 1));
+        });
+        return view('admin.dashboard', compact('totalUsers', 'totalStudents', 'totalSeats', 'vacantSeats', 'groupedVacantSeats', 'groupedReservedSeats'));
     }
 
     public function getVacantSeats()
     {
-        $vacantSeats = Seat::where('status', 'vacant')->count();
-        $vacantSeatsList = Seat::where('status', 'vacant')->orderBy('number', 'asc')->get();
-        
+        $vacantSeats = Seat::where('status', 'vacant')->where('is_reserved', 0)->count();
+        $vacantSeatsList = Seat::where('status', 'vacant')->where('is_reserved', 0)->orderBy('number', 'asc')->get();
+        // Group by first letter
+        $groupedVacantSeats = $vacantSeatsList->groupBy(function($seat) {
+            return strtoupper(substr($seat->number, 0, 1));
+        });
         return response()->json([
             'success' => true,
             'data' => [
                 'vacantSeats' => $vacantSeats,
-                'vacantSeatsList' => $vacantSeatsList
+                'groupedVacantSeats' => $groupedVacantSeats
             ],
             'timestamp' => now()->toISOString()
         ]);

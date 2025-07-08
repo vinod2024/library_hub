@@ -81,9 +81,18 @@ class TimesheetController extends Controller
         } */
 
         // Get available seats
-        $availableSeats = Seat::where('status', 'vacant')
-            ->whereNull('assigned_to')
-            ->get();
+        if(!empty($studentProfile->seat_id)){
+            $availableSeats = Seat::where('is_reserved', 1)
+                ->where('assigned_to', $studentProfile->id)
+                ->get();
+            // dd($availableSeats);
+        }else{
+            $availableSeats = Seat::where('status', 'vacant')
+                ->whereNull('assigned_to')
+                ->where('is_reserved', 0)
+                ->get();
+        }    
+
 
         if ($availableSeats->isEmpty()) {
             return redirect()->route('student.dashboard')->with('error', 'No seats are currently available. Please try again later.');
@@ -91,33 +100,24 @@ class TimesheetController extends Controller
 
         // If seat selection is provided
         if ($request->has('seat_id') && $request->input('seat_id')) {
+
             $selectedSeat = Seat::find($request->seat_id);
             
-            if (!$selectedSeat || $selectedSeat->status !== 'vacant' || $selectedSeat->assigned_to !== null) {
-                return redirect()->route('student.dashboard')->with('error', 'Selected seat is not available.');
-            }
 
-            // Assign seat to student
-            $selectedSeat->update([
-                'status' => 'occupied',
-                'assigned_to' => $studentProfile->id
-            ]);
-
-            // Update student profile with seat
-            $studentProfile->update(['seat_id' => $selectedSeat->id]);
-
-            // Create or update timesheet
-            /* if (!$todayTimesheet) {
-                $todayTimesheet = Timesheet::create([
-                    'student_profile_id' => $studentProfile->id,
-                    'date' => $currentTime->toDateString(),
-                    'check_in' => $currentTime->toTimeString(),
-                    'status' => 'pending'
+            if(empty($studentProfile->seat_id)){
+                if (!$selectedSeat || $selectedSeat->status !== 'vacant' || $selectedSeat->assigned_to !== null) {
+                    return redirect()->route('student.dashboard')->with('error', 'Selected seat is not available.');
+                }
+                // Assign seat to student
+                $selectedSeat->update([
+                    'status' => 'occupied',
+                    'assigned_to' => $studentProfile->id
                 ]);
-            } else {
-                $todayTimesheet->update(['check_in' => $currentTime->toTimeString()]);
-            } */
 
+                // Update student profile with seat
+                $studentProfile->update(['seat_id' => $selectedSeat->id]);
+            }
+            
             $todayTimesheet = Timesheet::create([
                 'student_profile_id' => $studentProfile->id,
                 'date' => $currentTime->toDateString(),
@@ -211,15 +211,17 @@ class TimesheetController extends Controller
         // Free up the seat if assigned
         if ($studentProfile->seat_id) {
             $seat = Seat::find($studentProfile->seat_id);
-            if ($seat) {
-                $seat->update([
-                    'status' => 'vacant',
-                    'assigned_to' => null
-                ]);
+            if($seat->is_reserved == 0){
+                if ($seat) {
+                    $seat->update([
+                        'status' => 'vacant',
+                        'assigned_to' => null
+                    ]);
+                }
+                
+                // Remove seat assignment from student profile
+                $studentProfile->update(['seat_id' => null]);
             }
-            
-            // Remove seat assignment from student profile
-            $studentProfile->update(['seat_id' => null]);
         }
 
         return redirect()->route('student.dashboard')->with('success', 'Successfully checked out. Your seat has been freed.');
