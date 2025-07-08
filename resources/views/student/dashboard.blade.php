@@ -84,6 +84,7 @@
                     <h4 class="card-title mb-1">{{ ucwords($studentProfile->user->name) ?? '-' }}</h4>
                     <!-- <p class="mb-1"><span class="badge bg-info text-dark">Student</span></p> -->
                     <ul class="list-unstyled mb-0 text-secondary">
+                        <li><i class="bi bi-person-circle me-2"></i> {{ $studentProfile->register_no ?? '-' }}</li>
                         <li><i class="bi bi-telephone me-2"></i> {{ $studentProfile->mobile ?? '-' }}</li>
                         <li><i class="bi bi-envelope me-2"></i> {{ $studentProfile->user->email ?? '-' }}</li>
                         <li><i class="bi bi-paypal me-2"></i> {{ Carbon\Carbon::parse($studentProfile->joining_date)->addMonth()->subDay()->format('d-m-Y') }}</li>

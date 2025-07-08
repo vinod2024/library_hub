@@ -8,7 +8,7 @@ class StudentProfile extends Model
 {
     protected $fillable = [
         'user_id', 'mobile', 'address', 'photo', 'id_proof', 'courses',
-        'purpose', 'timeslot_start', 'timeslot_end', 'joining_date', 'seat_id'
+        'purpose', 'timeslot_start', 'timeslot_end', 'joining_date', 'seat_id', 'register_no'
     ];
 
     protected $casts = [
