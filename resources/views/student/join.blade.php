@@ -244,8 +244,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check image dimensions (async)
         const img = new Image();
         img.onload = function() {
-            if (parseInt(this.width) > 1000 || parseInt(this.height) > 1000 ) {
-                validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 1000x1000 pixels</div>';
+            if (parseInt(this.width) > 1500 || parseInt(this.height) > 1500 ) {
+                validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 1500x1500 pixels</div>';
                 container.classList.remove('has-file');
                 preview.innerHTML = '';
                 isPhotoValid = false;
