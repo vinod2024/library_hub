@@ -151,11 +151,11 @@
 <div class="row mb-4">
     <div class="col-12">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-success-subtle  d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-grid-3x3-gap me-2"></i>Vacant Seats</h5>
                 <div class="d-flex align-items-center">
                     
-                    <button class="btn btn-sm btn-outline-light" onclick="refreshVacantSeats()">
+                    <button class="btn btn-sm btn-outline-dark" onclick="refreshVacantSeats()">
                         <i class="bi bi-arrow-clockwise"></i> Refresh
                     </button>
                 </div>
@@ -163,21 +163,59 @@
             <div class="card-body">
                 <div id="vacant-seats-content">
                     <div class="row g-1">
-                        @foreach($vacantSeatsList ?? [] as $seat)
-                        <div class="col-md-1 col-sm-1 col-2 col-3">
-                            <div class="card border-success text-center" style="min-height: 40px;">
-                                <div class="card-body py-1 px-0">
-                                    <div class="fw-bold text-success" style="font-size: 0.9rem;">{{ $seat->number }}</div>
-                                </div>
+                        @forelse($groupedVacantSeats ?? [] as $letter => $seats)
+                            <div class="col-12 mt-2 mb-1">
+                                <span class="badge bg-success-subtle" style="font-size:1rem; letter-spacing:1px;">{{ $letter.' block' }}</span>
                             </div>
-                        </div>
-                        @endforeach
-                        @if(empty($vacantSeatsList))
-                        <div class="col-12 text-center text-muted">
-                            <i class="bi bi-inbox" style="font-size:1.5rem;"></i>
-                            <p class="mt-1 mb-0">No vacant seats</p>
-                        </div>
-                        @endif
+                            
+                            @foreach($seats as $seat)
+                                <div class="col-md-1 col-sm-1 col-2 col-3">
+                                    <div class="card border-success text-center" style="min-height: 40px;">
+                                        <div class="card-body py-1 px-0">
+                                            <div class="fw-bold text-success" style="font-size: 0.9rem;">{{ $seat->number }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @empty
+                            <div class="col-12 text-center text-muted">
+                                <i class="bi bi-inbox" style="font-size:1.5rem;"></i>
+                                <p class="mt-1 mb-0">No vacant seats</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Reserved Seats Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-warning-subtle d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-lock-fill me-2"></i>Reserved Seats</h5>
+            </div>
+            <div class="card-body">
+                <div id="reserved-seats-content">
+                    <div class="row g-1">
+                        @forelse($groupedReservedSeats ?? [] as $letter => $seats)
+                            
+                            @foreach($seats as $seat)
+                                <div class="col-md-1 col-sm-1 col-2 col-3">
+                                    <div class="card border-warning text-center" style="min-height: 40px;">
+                                        <div class="card-body py-1 px-0">
+                                            <div class="fw-bold text-warning" style="font-size: 0.9rem;">{{ $seat->number }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @empty
+                            <div class="col-12 text-center text-muted">
+                                <i class="bi bi-inbox" style="font-size:1.5rem;"></i>
+                                <p class="mt-1 mb-0">No reserved seats</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -263,32 +301,26 @@ async function fetchVacantSeats() {
             const originalContent = refreshBtn.innerHTML;
             refreshBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Refreshing...';
             refreshBtn.disabled = true;
-            
             setTimeout(() => {
                 refreshBtn.innerHTML = originalContent;
                 refreshBtn.disabled = false;
             }, 1000);
         }
-        
         const response = await fetch('{{ route("admin.vacant-seats.api") }}');
         const data = await response.json();
-        
         if (data.success) {
-            updateVacantSeatsDisplay(data.data.vacantSeats, data.data.vacantSeatsList);
+            updateVacantSeatsDisplay(data.data.vacantSeats, data.data.groupedVacantSeats);
         }
     } catch (error) {
         console.error('Error fetching vacant seats data:', error);
     }
 }
 
-// Function to update vacant seats display
-function updateVacantSeatsDisplay(vacantSeatsCount, vacantSeatsList) {
+// Function to update vacant seats display (grouped by alphabet)
+function updateVacantSeatsDisplay(vacantSeatsCount, groupedVacantSeats) {
     const contentDiv = document.getElementById('vacant-seats-content');
-    
-    // Add a subtle fade effect
     contentDiv.style.opacity = '0.7';
     contentDiv.style.transition = 'opacity 0.3s ease';
-    
     setTimeout(() => {
         if (vacantSeatsCount === 0) {
             contentDiv.innerHTML = `
@@ -301,35 +333,34 @@ function updateVacantSeatsDisplay(vacantSeatsCount, vacantSeatsList) {
             `;
         } else {
             let seatsHtml = '<div class="row g-1">';
-            vacantSeatsList.forEach(seat => {
+            for (const letter in groupedVacantSeats) {
                 seatsHtml += `
-                    <div class="col-md-1 col-sm-1 col-2 col-3">
-                        <div class="card border-success text-center" style="min-height: 40px;">
-                            <div class="card-body py-1 px-0">
-                                <div class="fw-bold text-success" style="font-size: 0.9rem;">${seat.number}</div>
-                            </div>
-                        </div>
+                    <div class="col-12 mt-2 mb-1">
+                        <span class="badge bg-success" style="font-size:1rem; letter-spacing:1px;">${letter} block</span>
                     </div>
                 `;
-            });
+                groupedVacantSeats[letter].forEach(seat => {
+                    seatsHtml += `
+                        <div class="col-md-1 col-sm-1 col-2 col-3">
+                            <div class="card border-success text-center" style="min-height: 40px;">
+                                <div class="card-body py-1 px-0">
+                                    <div class="fw-bold text-success" style="font-size: 0.9rem;">${seat.number}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
             seatsHtml += '</div>';
             contentDiv.innerHTML = seatsHtml;
         }
-        
-        // Restore opacity
         contentDiv.style.opacity = '1';
-        
         // Update the count in the stats widget
         const countElement = document.getElementById('vacant-seats-count');
         if (countElement) {
             countElement.textContent = vacantSeatsCount;
         }
     }, 150);
-}
-
-// Function to refresh vacant seats manually
-function refreshVacantSeats() {
-    fetchVacantSeats();
 }
 
 // Function to fetch overstay data

@@ -213,7 +213,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('joining_date').min = today;
     
-    // File validation functions
+    let isPhotoValid = false;
+
     function validatePhoto(file) {
         const container = document.getElementById('photoContainer');
         const validation = document.getElementById('photoValidation');
@@ -223,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         container.classList.remove('has-file');
         validation.innerHTML = '';
         preview.innerHTML = '';
+        isPhotoValid = false;
         
         if (!file) return false;
         
@@ -239,26 +241,33 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        // Check image dimensions
+        // Check image dimensions (async)
         const img = new Image();
         img.onload = function() {
-            if (this.width < 200 || this.height < 200 || this.width > 2000 || this.height > 2000) {
-                validation.innerHTML = '<div class="validation-error">Image dimensions must be between 200x200 and 2000x2000 pixels</div>';
+            if (parseInt(this.width) > 400 || parseInt(this.height) > 500 ) {
+                validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 400x500 pixels</div>';
                 container.classList.remove('has-file');
+                preview.innerHTML = '';
+                isPhotoValid = false;
             } else {
                 validation.innerHTML = '<div class="validation-success">✓ Photo validated successfully</div>';
                 container.classList.add('has-file');
+                // Show preview only if valid
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" class="file-preview" alt="Photo preview">`;
+                };
+                reader.readAsDataURL(file);
+                isPhotoValid = true;
             }
+        };
+        img.onerror = function() {
+            validation.innerHTML = '<div class="validation-error">Could not load image for validation</div>';
+            isPhotoValid = false;
         };
         img.src = URL.createObjectURL(file);
         
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = `<img src="${e.target.result}" class="file-preview" alt="Photo preview">`;
-        };
-        reader.readAsDataURL(file);
-        
+        // Do not show preview here; only after dimension check
         return true;
     }
     
@@ -274,9 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!file) return false;
         
-        // Check file type
+        // Check file type or extension
         const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-        if (!allowedTypes.includes(file.type)) {
+        const fileName = file.name || '';
+        const isPdfByExt = fileName.toLowerCase().endsWith('.pdf');
+        if (!allowedTypes.includes(file.type) && !isPdfByExt) {
             validation.innerHTML = '<div class="validation-error">Please select a valid file (JPEG, PNG, JPG, PDF)</div>';
             return false;
         }
@@ -297,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 preview.innerHTML = `<img src="${e.target.result}" class="file-preview" alt="ID Proof preview">`;
             };
             reader.readAsDataURL(file);
-        } else {
+        } else if (isPdfByExt || file.type === 'application/pdf') {
             preview.innerHTML = `<div class="file-info"><i class="bi bi-file-pdf text-danger"></i> PDF Document</div>`;
         }
         
@@ -360,8 +371,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Additional validation
-        if (!validatePhoto(photo) || !validateIdProof(idProof)) {
+        if (!isPhotoValid || !validateIdProof(idProof)) {
             e.preventDefault();
+            if (!isPhotoValid) {
+                document.getElementById('photoValidation').innerHTML = '<div class="validation-error">Photo is not valid. Please select a valid image.</div>';
+            }
             return false;
         }
     });
