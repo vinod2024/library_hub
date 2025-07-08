@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Panel - @yield('title', 'Dashboard')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
         body.admin-bg {
@@ -98,11 +99,7 @@
     <footer class="admin-footer text-center py-3 mt-auto">
         <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
             <div class="d-flex align-items-center mb-2 mb-md-0">
-                <svg class="admin-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="40" height="40" rx="8" fill="#fff"/>
-                    <path d="M10 30V12a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v18" stroke="#1976d2" stroke-width="2" fill="none"/>
-                    <rect x="14" y="16" width="12" height="8" rx="2" fill="#1976d2"/>
-                </svg>
+                
                 <span class="ms-2">Library Management System</span>
             </div>
             <div>

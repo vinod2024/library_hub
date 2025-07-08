@@ -12,19 +12,37 @@
     <thead class="table-primary">
         <tr>
             <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Mobile</th>
+            <th scope="col">Photo</th>
             <th scope="col">Seat</th>
             <th scope="col">Timeslot</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($students as $student)
+        @foreach($students as $key => $student)
         <tr>
-            <td>{{ $student->id }}</td>
-            <td>{{ $student->user->name ?? 'N/A' }}</td>
-            <td>{{ $student->mobile }}</td>
+            <td>{{ $key + 1 }}</td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        @if($student->photo)
+                            <img src="{{ asset('storage/' . $student->photo) }}" alt="Profile Photo" class="border" style="width: 100px; height: 120px; object-fit:cover;">
+                        @else
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:70px;height:70px;font-size:2rem;">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        @endif
+                    </div>
+                    <div>
+                        <h5 class="mb-1">{{ ucwords($student->user->name ?? '-') }}</h5>
+                        <ul class="list-unstyled mb-0 text-secondary">
+                            <li><i class="bi bi-person-circle me-2"></i> {{ $student->register_no ?? '-' }}</li>
+                            <li><i class="bi bi-telephone me-2"></i> {{ $student->mobile ?? '-' }}</li>
+                            <li><i class="bi bi-envelope me-2"></i> {{ $student->user->email ?? '-' }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
             <td>{{ $student->seat->number ?? 'Unassigned' }}</td>
             <td>{{ $student->timeslot_start }} - {{ $student->timeslot_end }}</td>
             <td>
