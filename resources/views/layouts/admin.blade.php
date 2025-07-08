@@ -35,10 +35,10 @@
             box-shadow: 0 -2px 8px rgba(25,118,210,0.08);
         }
         .admin-logo {
-            width: 38px;
-            height: 38px;
-            margin-right: 10px;
-            vertical-align: middle;
+            /* width: 38px; */
+            height: 50px;
+            /* margin-right: 10px; */
+            /* vertical-align: middle; */
         }
         .navbar-brand {
             display: flex;
@@ -55,12 +55,8 @@
         <div class="container">
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
                 <!-- Sample SVG Logo -->
-                <svg class="admin-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="40" height="40" rx="8" fill="#fff"/>
-                    <path d="M10 30V12a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v18" stroke="#1976d2" stroke-width="2" fill="none"/>
-                    <rect x="14" y="16" width="12" height="8" rx="2" fill="#1976d2"/>
-                </svg>
-                Library Admin
+                <img src="{{ asset('images/logo.png') }}" alt="Library Admin" class="admin-logo">
+                <!-- Library Admin -->
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

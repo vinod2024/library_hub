@@ -1,7 +1,12 @@
 <x-guest-layout>
+
+    <div class="flex justify-center items-center mb-4">
+        <img src="{{ asset('images/logo.png') }}" alt="Library Admin" class="admin-logo">
+    </div>   
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    
     <form method="POST" action="{{ route('login') }}">
         @csrf
 

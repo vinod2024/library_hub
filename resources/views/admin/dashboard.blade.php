@@ -162,7 +162,7 @@
             </div>
             <div class="card-body">
                 <div id="vacant-seats-content">
-                    <div class="row g-1">
+                    <!-- <div class="row g-1">
                         @foreach($vacantSeatsList ?? [] as $seat)
                         <div class="col-md-1 col-sm-1 col-2 col-3">
                             <div class="card border-success text-center" style="min-height: 40px;">
@@ -178,7 +178,7 @@
                             <p class="mt-1 mb-0">No vacant seats</p>
                         </div>
                         @endif
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
