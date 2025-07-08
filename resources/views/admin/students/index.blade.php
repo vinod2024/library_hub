@@ -12,19 +12,29 @@
     <thead class="table-primary">
         <tr>
             <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Mobile</th>
+            <th scope="col">Photo</th>
+            <!-- <th scope="col">Name</th> -->
+            <!-- <th scope="col">Mobile</th> -->
             <th scope="col">Seat</th>
             <th scope="col">Timeslot</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($students as $student)
+        @foreach($students as $key => $student)
         <tr>
-            <td>{{ $student->id }}</td>
-            <td>{{ $student->user->name ?? 'N/A' }}</td>
-            <td>{{ $student->mobile }}</td>
+            <td>{{ $key + 1 }}</td>
+            <td>
+                <img src="{{ asset('storage/'.$student->photo) }}" alt="Photo" class="img-fluid" style="width: 75px; height: 85px;">
+                <br>
+                <span class="text-muted">{{ $student->register_no ?? 'N/A' }}</span>
+                <br>
+                <span class="text-muted">{{ $student->user->name ?? 'N/A' }}</span>
+                <br>
+                <span class="text-muted">{{ $student->user->mobile ?? 'N/A' }}</span>
+            </td>
+            <!-- <td>{{ $student->user->name ?? 'N/A' }}</td>
+            <td>{{ $student->mobile }}</td> -->
             <td>{{ $student->seat->number ?? 'Unassigned' }}</td>
             <td>{{ $student->timeslot_start }} - {{ $student->timeslot_end }}</td>
             <td>

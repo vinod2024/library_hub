@@ -98,11 +98,7 @@
     <footer class="admin-footer text-center py-3 mt-auto">
         <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
             <div class="d-flex align-items-center mb-2 mb-md-0">
-                <svg class="admin-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="40" height="40" rx="8" fill="#fff"/>
-                    <path d="M10 30V12a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v18" stroke="#1976d2" stroke-width="2" fill="none"/>
-                    <rect x="14" y="16" width="12" height="8" rx="2" fill="#1976d2"/>
-                </svg>
+                
                 <span class="ms-2">Library Management System</span>
             </div>
             <div>
