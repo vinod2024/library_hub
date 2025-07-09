@@ -36,8 +36,12 @@ class StudentController extends Controller
             'mobile' => 'required|string|max:20',
             'seat_id' => 'nullable|exists:seats,id',
             'register_no' => 'required|string|max:255',
-            'timeslot_start' => 'required',
-            'timeslot_end' => 'required',
+            'timeslot_1_start' => 'required',
+            'timeslot_1_end' => 'required',
+            'timeslot_2_start' => 'nullable',
+            'timeslot_2_end' => 'nullable',
+            'timeslot_3_start' => 'nullable',
+            'timeslot_3_end' => 'nullable',
         ]);
 
         // Update user name if available
@@ -50,8 +54,12 @@ class StudentController extends Controller
         $student->mobile = $validated['mobile'];
         $student->seat_id = $validated['seat_id'] ?? null;
         $student->register_no = $validated['register_no'];
-        $student->timeslot_start = $validated['timeslot_start'];
-        $student->timeslot_end = $validated['timeslot_end'];
+        $student->timeslot_1_start = $validated['timeslot_1_start'];
+        $student->timeslot_1_end = $validated['timeslot_1_end'];
+        $student->timeslot_2_start = $validated['timeslot_2_start'] ?? null;
+        $student->timeslot_2_end = $validated['timeslot_2_end'] ?? null;
+        $student->timeslot_3_start = $validated['timeslot_3_start'] ?? null;
+        $student->timeslot_3_end = $validated['timeslot_3_end'] ?? null;
         $student->save();
 
         if($previousSeatId){
