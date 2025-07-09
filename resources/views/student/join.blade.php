@@ -91,6 +91,10 @@
         color: #6c757d;
         margin-top: 0.25rem;
     }
+    .border-danger {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 2px #dc354533;
+    }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <div class="join-form-bg">
@@ -137,7 +141,7 @@
                 <div class="file-upload-container" id="photoContainer">
                     <i class="bi bi-camera fs-1 text-muted mb-2"></i>
                     <p class="mb-2">Click to upload or drag and drop</p>
-                    <input type="file" class="form-control d-none" id="photo" name="photo" accept="image/jpeg,image/png,image/jpg" required>
+                    <input type="file" class="form-control d-none" id="photo" name="photo" accept="image/jpeg,image/png,image/jpg">
                     <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('photo').click()">
                         <i class="bi bi-upload me-1"></i>Choose Photo
                     </button>
@@ -158,7 +162,7 @@
                 <div class="file-upload-container" id="idProofContainer">
                     <i class="bi bi-file-earmark-text fs-1 text-muted mb-2"></i>
                     <p class="mb-2">Click to upload or drag and drop</p>
-                    <input type="file" class="form-control d-none" id="id_proof" name="id_proof" accept="image/jpeg,image/png,image/jpg,application/pdf" required>
+                    <input type="file" class="form-control d-none" id="id_proof" name="id_proof" accept="image/jpeg,image/png,image/jpg,application/pdf">
                     <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('id_proof').click()">
                         <i class="bi bi-upload me-1"></i>Choose ID Proof
                     </button>
@@ -415,27 +419,54 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('joinForm').addEventListener('submit', function(e) {
         const photo = document.getElementById('photo').files[0];
         const idProof = document.getElementById('id_proof').files[0];
-        
+        const submitBtn = document.getElementById('submitBtn');
+
+        let firstErrorField = null;
+        let hasError = false;
+
         if (!photo) {
             e.preventDefault();
             document.getElementById('photoValidation').innerHTML = '<div class="validation-error">Photo is required</div>';
-            return false;
+            if (!firstErrorField) firstErrorField = document.getElementById('photo');
+            hasError = true;
         }
-        
         if (!idProof) {
             e.preventDefault();
             document.getElementById('idProofValidation').innerHTML = '<div class="validation-error">ID Proof is required</div>';
-            return false;
+            if (!firstErrorField) firstErrorField = document.getElementById('id_proof');
+            hasError = true;
         }
-        
-        // Additional validation
-        if (!isPhotoValid || !validateIdProof(idProof)) {
+        if (!isPhotoValid || (idProof && !validateIdProof(idProof))) {
             e.preventDefault();
             if (!isPhotoValid) {
                 document.getElementById('photoValidation').innerHTML = '<div class="validation-error">Photo is not valid. Please select a valid image.</div>';
+                if (!firstErrorField) firstErrorField = document.getElementById('photo');
+                hasError = true;
+            }
+        }
+        if (hasError && firstErrorField) {
+            // Find the visible container to focus/highlight
+            let container = null;
+            if (firstErrorField.id === 'photo') {
+                container = document.getElementById('photoContainer');
+            } else if (firstErrorField.id === 'id_proof') {
+                container = document.getElementById('idProofContainer');
+            }
+            if (container) {
+                container.scrollIntoView({ behavior: "smooth", block: "center" });
+                // Add a highlight effect
+                container.classList.add('border-danger');
+                setTimeout(() => container.classList.remove('border-danger'), 1500);
+                // Optionally, focus the first button inside the container
+                const btn = container.querySelector('button');
+                if (btn) btn.focus();
             }
             return false;
         }
+
+        // Disable the button and show "Joining..." with spinner
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Joining...';
     });
     
     // Time validation
