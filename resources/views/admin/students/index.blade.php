@@ -43,18 +43,22 @@
                     </div>
                 </div>
             </td>
-            <td>{{ $student->seat->number ?? 'Unassigned' }}</td>
+            <td>{{ $student->seat->number ?? '--' }}</td>
             <td>
-                1: {{ $student->timeslot_1_start }} - {{ $student->timeslot_1_end }}<br>
-                2: {{ $student->timeslot_2_start }} - {{ $student->timeslot_2_end }}<br>
-                3: {{ $student->timeslot_3_start }} - {{ $student->timeslot_3_end }}
+                Slot 1: {{ Carbon\Carbon::parse($student->timeslot_1_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_1_end)->format('h:i A') }}<br>
+                @if($student->timeslot_2_start)
+                Slot 2: {{ Carbon\Carbon::parse($student->timeslot_2_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_2_end)->format('h:i A') }}<br>
+                @endif
+                @if($student->timeslot_3_start)
+                Slot 3: {{ Carbon\Carbon::parse($student->timeslot_3_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_3_end)->format('h:i A') }}
+                @endif
             </td>
             <td>
                 <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                 <form action="{{ route('admin.students.destroy', $student->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this student?');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-sm btn-danger" disabled>Delete</button>
                 </form>
             </td>
         </tr>
