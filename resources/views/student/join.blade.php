@@ -163,6 +163,7 @@
                         <i class="bi bi-upload me-1"></i>Choose ID Proof
                     </button>
                     <div class="file-requirements">
+                        Accepted ID Proof: Aadhar, PAN, Voter ID, Driving Licence.<br>
                         Accepted formats: JPEG, PNG, JPG, PDF<br>
                         Max size: 5MB
                     </div>
@@ -192,32 +193,26 @@
                 @enderror
             </div>
             <div class="col-md-6">
-                <label for="timeslot_2_start" class="form-label">Timeslot 2 Start <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_2_start') is-invalid @enderror" id="timeslot_2_start" name="timeslot_2_start" value="{{ old('timeslot_2_start') }}" required>
+                <label for="timeslot_2_start" class="form-label">Timeslot 2 Start </label>
+                <input type="time" class="form-control @error('timeslot_2_start') is-invalid @enderror" id="timeslot_2_start" name="timeslot_2_start" value="{{ old('timeslot_2_start') }}" >
                 @error('timeslot_2_start')
                     <div class="validation-error">{{ $message }}</div>
                 @enderror
             </div>
             <div class="col-md-6">
-                <label for="timeslot_2_end" class="form-label">Timeslot 2 End <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_2_end') is-invalid @enderror" id="timeslot_2_end" name="timeslot_2_end" value="{{ old('timeslot_2_end') }}" required>
-                @error('timeslot_2_end')
-                    <div class="validation-error">{{ $message }}</div>
-                @enderror
+                <label for="timeslot_2_end" class="form-label">Timeslot 2 End  </label>
+                <input type="time" class="form-control" id="timeslot_2_end" name="timeslot_2_end" value="{{ old('timeslot_2_end') }}" >
+                
             </div>
             <div class="col-md-6">
-                <label for="timeslot_3_start" class="form-label">Timeslot 3 Start <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_3_start') is-invalid @enderror" id="timeslot_3_start" name="timeslot_3_start" value="{{ old('timeslot_3_start') }}" required>
-                @error('timeslot_3_start')
-                    <div class="validation-error">{{ $message }}</div>
-                @enderror
+                <label for="timeslot_3_start" class="form-label">Timeslot 3 Start </label>
+                <input type="time" class="form-control" id="timeslot_3_start" name="timeslot_3_start" value="{{ old('timeslot_3_start') }}" >
+                
             </div>
             <div class="col-md-6">
-                <label for="timeslot_3_end" class="form-label">Timeslot 3 End <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_3_end') is-invalid @enderror" id="timeslot_3_end" name="timeslot_3_end" value="{{ old('timeslot_3_end') }}" required>
-                @error('timeslot_3_end')
-                    <div class="validation-error">{{ $message }}</div>
-                @enderror
+                <label for="timeslot_3_end" class="form-label">Timeslot 3 End </label>
+                <input type="time" class="form-control" id="timeslot_3_end" name="timeslot_3_end" value="{{ old('timeslot_3_end') }}" >
+                
             </div>
             <div class="col-md-6">
                 <label for="joining_date" class="form-label">Joining Date <span class="text-danger">*</span></label>
