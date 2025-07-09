@@ -415,20 +415,18 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('joinForm').addEventListener('submit', function(e) {
         const photo = document.getElementById('photo').files[0];
         const idProof = document.getElementById('id_proof').files[0];
-        
+        const submitBtn = document.getElementById('submitBtn');
+
         if (!photo) {
             e.preventDefault();
             document.getElementById('photoValidation').innerHTML = '<div class="validation-error">Photo is required</div>';
             return false;
         }
-        
         if (!idProof) {
             e.preventDefault();
             document.getElementById('idProofValidation').innerHTML = '<div class="validation-error">ID Proof is required</div>';
             return false;
         }
-        
-        // Additional validation
         if (!isPhotoValid || !validateIdProof(idProof)) {
             e.preventDefault();
             if (!isPhotoValid) {
@@ -436,6 +434,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return false;
         }
+
+        // Disable the button and show "Joining..." with spinner
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Joining...';
     });
     
     // Time validation
