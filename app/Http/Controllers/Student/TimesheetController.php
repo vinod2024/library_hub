@@ -33,18 +33,27 @@ class TimesheetController extends Controller
             $startMinutes = (int)$startTime->format('H') * 60 + (int)$startTime->format('i');
             $endMinutes = (int)$endTime->format('H') * 60 + (int)$endTime->format('i');
             $timeslotMessages[] = $startTime->format('H:i') . ' - ' . $endTime->format('H:i');
-            if ($startMinutes > $endMinutes) {
+
+            if ($currentTimeMinutes >= $startMinutes && $currentTimeMinutes <= $endMinutes) {
+                $isWithinTimeslot = true;
+                $studentProfile->update(['timeslot_start' => $startTime->format('H:i'), 'timeslot_end' => $endTime->format('H:i')]);
+                // return $studentProfile;
+                break;
+            }
+           /*  if ($startMinutes > $endMinutes) {
+                return $startMinutes;
                 // Timeslot spans midnight
                 if ($currentTimeMinutes >= $startMinutes || $currentTimeMinutes <= $endMinutes) {
                     $isWithinTimeslot = true;
                     break;
                 }
             } else {
+                return 'else'.$startMinutes;
                 if ($currentTimeMinutes >= $startMinutes && $currentTimeMinutes <= $endMinutes) {
                     $isWithinTimeslot = true;
                     break;
                 }
-            }
+            } */
         }
         if (!$isWithinTimeslot) {
             return redirect()->route('student.dashboard')->with('error', 'Check-in is only allowed during your assigned timeslots: ' . implode(' | ', $timeslotMessages));
@@ -124,7 +133,7 @@ class TimesheetController extends Controller
         $currentTimeMinutes = (int)$currentTime->format('H') * 60 + (int)$currentTime->format('i');
         $isWithinTimeslot = false;
         $timeslotMessages = [];
-        for ($i = 1; $i <= 3; $i++) {
+        /* for ($i = 1; $i <= 3; $i++) {
             $start = $studentProfile->{"timeslot_{$i}_start"};
             $end = $studentProfile->{"timeslot_{$i}_end"};
             if (!$start || !$end) continue; // skip incomplete timeslot
@@ -143,7 +152,7 @@ class TimesheetController extends Controller
         }
         if (!$isWithinTimeslot) {
             return redirect()->route('student.dashboard')->with('error', 'Check-out is only allowed during your assigned timeslots: ' . implode(' | ', $timeslotMessages));
-        }
+        } */
 
         // Check if checked in today
         $todayTimesheet = Timesheet::where('student_profile_id', $studentProfile->id)
