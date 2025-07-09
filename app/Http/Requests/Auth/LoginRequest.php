@@ -49,6 +49,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if user is enabled
+        $user = Auth::user();
+        if (! $user->enabled) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => 'Your account has been disabled. Please contact the administrator.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

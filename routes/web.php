@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+    Route::post('users/{user}/enable', [App\Http\Controllers\Admin\UserController::class, 'enable'])->name('users.enable');
+    Route::post('users/{user}/disable', [App\Http\Controllers\Admin\UserController::class, 'disable'])->name('users.disable');
     Route::resource('seats', App\Http\Controllers\Admin\SeatController::class);
     Route::resource('students', App\Http\Controllers\Admin\StudentController::class);
     Route::get('reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');

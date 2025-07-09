@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'enabled', // Add this line
     ];
 
     /**
@@ -61,5 +62,13 @@ class User extends Authenticatable
     public function studentProfile()
     {
         return $this->hasOne(StudentProfile::class);
+    }
+
+    /**
+     * Scope a query to only include enabled users.
+     */
+    public function scopeEnabled($query)
+    {
+        return $query->where('enabled', true);
     }
 }
