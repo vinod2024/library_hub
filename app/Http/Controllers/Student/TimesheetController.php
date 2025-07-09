@@ -19,56 +19,44 @@ class TimesheetController extends Controller
             return redirect()->route('student.dashboard')->with('error', 'Student profile not found. Please join the library first.');
         }
 
-        // Check if current time is within allowed timeslot
+        // Check if current time is within any allowed timeslot
         $currentTime = Carbon::now();
-        
-        // Handle different time formats
-        $timeslotStart = null;
-        $timeslotEnd = null;
-        
-        if (is_string($studentProfile->timeslot_start)) {
-            $timeslotStart = Carbon::createFromFormat('H:i', $studentProfile->timeslot_start);
-        } else {
-            $timeslotStart = $studentProfile->timeslot_start;
-        }
-        
-        if (is_string($studentProfile->timeslot_end)) {
-            $timeslotEnd = Carbon::createFromFormat('H:i', $studentProfile->timeslot_end);
-        } else {
-            $timeslotEnd = $studentProfile->timeslot_end;
-        }
-        
-                // Check if current time is within timeslot using proper time comparison
-        $currentHour = (int)$currentTime->format('H');
-        $currentMinute = (int)$currentTime->format('i');
-        $currentTimeMinutes = $currentHour * 60 + $currentMinute;
-        
-        $startHour = (int)$timeslotStart->format('H');
-        $startMinute = (int)$timeslotStart->format('i');
-        $startTimeMinutes = $startHour * 60 + $startMinute;
-        
-        $endHour = (int)$timeslotEnd->format('H');
-        $endMinute = (int)$timeslotEnd->format('i');
-        $endTimeMinutes = $endHour * 60 + $endMinute;
-        
+        $currentTimeMinutes = (int)$currentTime->format('H') * 60 + (int)$currentTime->format('i');
         $isWithinTimeslot = false;
-        
-        // Handle timeslot that spans across midnight (e.g., 23:31 to 10:41)
-        if ($startTimeMinutes > $endTimeMinutes) {
-            // Timeslot spans midnight: current time should be >= start OR <= end
-            $isWithinTimeslot = ($currentTimeMinutes >= $startTimeMinutes || $currentTimeMinutes <= $endTimeMinutes);
-        } else {
-            // Normal timeslot: current time should be >= start AND <= end
-            $isWithinTimeslot = ($currentTimeMinutes >= $startTimeMinutes && $currentTimeMinutes <= $endTimeMinutes);
+        $timeslotMessages = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $start = $studentProfile->{"timeslot_{$i}_start"};
+            $end = $studentProfile->{"timeslot_{$i}_end"};
+            if (!$start || !$end) continue; // skip incomplete timeslot
+            $startTime = is_string($start) ? Carbon::createFromFormat('H:i', $start) : $start;
+            $endTime = is_string($end) ? Carbon::createFromFormat('H:i', $end) : $end;
+            $startMinutes = (int)$startTime->format('H') * 60 + (int)$startTime->format('i');
+            $endMinutes = (int)$endTime->format('H') * 60 + (int)$endTime->format('i');
+            $timeslotMessages[] = $startTime->format('H:i') . ' - ' . $endTime->format('H:i');
+
+            if ($currentTimeMinutes >= $startMinutes && $currentTimeMinutes <= $endMinutes) {
+                $isWithinTimeslot = true;
+                $studentProfile->update(['timeslot_start' => $startTime->format('H:i'), 'timeslot_end' => $endTime->format('H:i')]);
+                // return $studentProfile;
+                break;
+            }
+           /*  if ($startMinutes > $endMinutes) {
+                return $startMinutes;
+                // Timeslot spans midnight
+                if ($currentTimeMinutes >= $startMinutes || $currentTimeMinutes <= $endMinutes) {
+                    $isWithinTimeslot = true;
+                    break;
+                }
+            } else {
+                return 'else'.$startMinutes;
+                if ($currentTimeMinutes >= $startMinutes && $currentTimeMinutes <= $endMinutes) {
+                    $isWithinTimeslot = true;
+                    break;
+                }
+            } */
         }
-
-        /* $isWithinTimeslot = ($currentTimeMinutes >= $startTimeMinutes && $currentTimeMinutes <= $endTimeMinutes);
-        var_dump($isWithinTimeslot);
-        die(); */
-
         if (!$isWithinTimeslot) {
-            return redirect()->route('student.dashboard')->with('error', 'Check-in is only allowed during your assigned timeslot: ' . 
-                $timeslotStart->format('H:i') . ' - ' . $timeslotEnd->format('H:i'));
+            return redirect()->route('student.dashboard')->with('error', 'Check-in is only allowed during your assigned timeslots: ' . implode(' | ', $timeslotMessages));
         }
 
         // Check if already checked in today
@@ -142,50 +130,28 @@ class TimesheetController extends Controller
 
         // Check if current time is within allowed timeslot
         $currentTime = Carbon::now();
-        
-        // Handle different time formats
-        $timeslotStart = null;
-        $timeslotEnd = null;
-        
-        if (is_string($studentProfile->timeslot_start)) {
-            $timeslotStart = Carbon::createFromFormat('H:i', $studentProfile->timeslot_start);
-        } else {
-            $timeslotStart = $studentProfile->timeslot_start;
-        }
-        
-        if (is_string($studentProfile->timeslot_end)) {
-            $timeslotEnd = Carbon::createFromFormat('H:i', $studentProfile->timeslot_end);
-        } else {
-            $timeslotEnd = $studentProfile->timeslot_end;
-        }
-        
-        // Check if current time is within timeslot using proper time comparison
-        $currentHour = (int)$currentTime->format('H');
-        $currentMinute = (int)$currentTime->format('i');
-        $currentTimeMinutes = $currentHour * 60 + $currentMinute;
-        
-        $startHour = (int)$timeslotStart->format('H');
-        $startMinute = (int)$timeslotStart->format('i');
-        $startTimeMinutes = $startHour * 60 + $startMinute;
-        
-        $endHour = (int)$timeslotEnd->format('H');
-        $endMinute = (int)$timeslotEnd->format('i');
-        $endTimeMinutes = $endHour * 60 + $endMinute;
-        
+        $currentTimeMinutes = (int)$currentTime->format('H') * 60 + (int)$currentTime->format('i');
         $isWithinTimeslot = false;
-        
-        // Handle timeslot that spans across midnight (e.g., 23:31 to 10:41)
-        if ($startTimeMinutes > $endTimeMinutes) {
-            // Timeslot spans midnight: current time should be >= start OR <= end
-            $isWithinTimeslot = ($currentTimeMinutes >= $startTimeMinutes || $currentTimeMinutes <= $endTimeMinutes);
-        } else {
-            // Normal timeslot: current time should be >= start AND <= end
-            $isWithinTimeslot = ($currentTimeMinutes >= $startTimeMinutes && $currentTimeMinutes <= $endTimeMinutes);
+        $timeslotMessages = [];
+        /* for ($i = 1; $i <= 3; $i++) {
+            $start = $studentProfile->{"timeslot_{$i}_start"};
+            $end = $studentProfile->{"timeslot_{$i}_end"};
+            if (!$start || !$end) continue; // skip incomplete timeslot
+            $startTime = is_string($start) ? Carbon::createFromFormat('H:i', $start) : $start;
+            $endTime = is_string($end) ? Carbon::createFromFormat('H:i', $end) : $end;
+            $startMinutes = (int)$startTime->format('H') * 60 + (int)$startTime->format('i');
+            $endMinutes = (int)$endTime->format('H') * 60 + (int)$endTime->format('i');
+            $timeslotMessages[] = $startTime->format('H:i') . ' - ' . $endTime->format('H:i');
+            if ($startMinutes > $endMinutes) {
+                // Timeslot spans midnight: current time should be >= start OR <= end
+                $isWithinTimeslot = ($currentTimeMinutes >= $startMinutes || $currentTimeMinutes <= $endMinutes);
+            } else {
+                // Normal timeslot: current time should be >= start AND <= end
+                $isWithinTimeslot = ($currentTimeMinutes >= $startMinutes && $currentTimeMinutes <= $endMinutes);
+            }
         }
-        
-        /* if (!$isWithinTimeslot) {
-            return redirect()->route('student.dashboard')->with('error', 'Check-out is only allowed during your assigned timeslot: ' . 
-                $timeslotStart->format('H:i') . ' - ' . $timeslotEnd->format('H:i'));
+        if (!$isWithinTimeslot) {
+            return redirect()->route('student.dashboard')->with('error', 'Check-out is only allowed during your assigned timeslots: ' . implode(' | ', $timeslotMessages));
         } */
 
         // Check if checked in today

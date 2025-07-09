@@ -44,7 +44,11 @@
                 </div>
             </td>
             <td>{{ $student->seat->number ?? 'Unassigned' }}</td>
-            <td>{{ $student->timeslot_start }} - {{ $student->timeslot_end }}</td>
+            <td>
+                1: {{ $student->timeslot_1_start }} - {{ $student->timeslot_1_end }}<br>
+                2: {{ $student->timeslot_2_start }} - {{ $student->timeslot_2_end }}<br>
+                3: {{ $student->timeslot_3_start }} - {{ $student->timeslot_3_end }}
+            </td>
             <td>
                 <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                 <form action="{{ route('admin.students.destroy', $student->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this student?');">
