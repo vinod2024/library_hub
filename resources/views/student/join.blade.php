@@ -177,21 +177,49 @@
         
         <div class="form-section-title"><i class="bi bi-clock-history"></i>Library Usage</div>
         <div class="row g-3 mb-3">
-            <div class="col-md-4">
-                <label for="timeslot_start" class="form-label">Timeslot Start <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_start') is-invalid @enderror" id="timeslot_start" name="timeslot_start" value="{{ old('timeslot_start') }}" required>
-                @error('timeslot_start')
+            <div class="col-md-6">
+                <label for="timeslot_1_start" class="form-label">Timeslot 1 Start <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_1_start') is-invalid @enderror" id="timeslot_1_start" name="timeslot_1_start" value="{{ old('timeslot_1_start') }}" required>
+                @error('timeslot_1_start')
                     <div class="validation-error">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="col-md-4">
-                <label for="timeslot_end" class="form-label">Timeslot End <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_end') is-invalid @enderror" id="timeslot_end" name="timeslot_end" value="{{ old('timeslot_end') }}" required>
-                @error('timeslot_end')
+            <div class="col-md-6">
+                <label for="timeslot_1_end" class="form-label">Timeslot 1 End <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_1_end') is-invalid @enderror" id="timeslot_1_end" name="timeslot_1_end" value="{{ old('timeslot_1_end') }}" required>
+                @error('timeslot_1_end')
                     <div class="validation-error">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
+                <label for="timeslot_2_start" class="form-label">Timeslot 2 Start <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_2_start') is-invalid @enderror" id="timeslot_2_start" name="timeslot_2_start" value="{{ old('timeslot_2_start') }}" required>
+                @error('timeslot_2_start')
+                    <div class="validation-error">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="col-md-6">
+                <label for="timeslot_2_end" class="form-label">Timeslot 2 End <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_2_end') is-invalid @enderror" id="timeslot_2_end" name="timeslot_2_end" value="{{ old('timeslot_2_end') }}" required>
+                @error('timeslot_2_end')
+                    <div class="validation-error">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="col-md-6">
+                <label for="timeslot_3_start" class="form-label">Timeslot 3 Start <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_3_start') is-invalid @enderror" id="timeslot_3_start" name="timeslot_3_start" value="{{ old('timeslot_3_start') }}" required>
+                @error('timeslot_3_start')
+                    <div class="validation-error">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="col-md-6">
+                <label for="timeslot_3_end" class="form-label">Timeslot 3 End <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_3_end') is-invalid @enderror" id="timeslot_3_end" name="timeslot_3_end" value="{{ old('timeslot_3_end') }}" required>
+                @error('timeslot_3_end')
+                    <div class="validation-error">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="col-md-6">
                 <label for="joining_date" class="form-label">Joining Date <span class="text-danger">*</span></label>
                 <input type="date" class="form-control @error('joining_date') is-invalid @enderror" id="joining_date" name="joining_date" value="{{ old('joining_date') }}" required>
                 @error('joining_date')

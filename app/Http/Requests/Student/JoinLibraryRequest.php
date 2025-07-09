@@ -26,8 +26,12 @@ class JoinLibraryRequest extends FormRequest
             'address' => 'required|string|max:255',
             'photo' => 'required|image|mimes:jpeg,png,jpg|max:10500|dimensions:max_width=2000,max_height=2000',
             'id_proof' => 'required|file|mimes:jpeg,png,jpg,pdf|max:10500',
-            'timeslot_start' => 'required|date_format:H:i',
-            'timeslot_end' => 'required|date_format:H:i|after:timeslot_start',
+            'timeslot_1_start' => 'required|date_format:H:i',
+            'timeslot_1_end' => 'required|date_format:H:i|after:timeslot_1_start',
+            'timeslot_2_start' => 'required|date_format:H:i',
+            'timeslot_2_end' => 'required|date_format:H:i|after:timeslot_2_start',
+            'timeslot_3_start' => 'required|date_format:H:i',
+            'timeslot_3_end' => 'required|date_format:H:i|after:timeslot_3_start',
             'joining_date' => 'required|date',
         ];
     }
@@ -56,12 +60,26 @@ class JoinLibraryRequest extends FormRequest
             'id_proof.mimes' => 'The ID proof must be a JPEG, PNG, JPG, or PDF file.',
             'id_proof.max' => 'The ID proof file size must not exceed 4.5MB.',
             
-            'timeslot_start.required' => 'Start time is required.',
-            'timeslot_start.date_format' => 'Please enter a valid time format.',
+            'timeslot_1_start.required' => 'Timeslot 1 start time is required.',
+            'timeslot_1_start.date_format' => 'Please enter a valid time format for timeslot 1.',
             
-            'timeslot_end.required' => 'End time is required.',
-            'timeslot_end.date_format' => 'Please enter a valid time format.',
-            'timeslot_end.after' => 'The end time must be after the start time.',
+            'timeslot_1_end.required' => 'Timeslot 1 end time is required.',
+            'timeslot_1_end.date_format' => 'Please enter a valid time format for timeslot 1.',
+            'timeslot_1_end.after' => 'Timeslot 1 end time must be after the start time.',
+            
+            'timeslot_2_start.required' => 'Timeslot 2 start time is required.',
+            'timeslot_2_start.date_format' => 'Please enter a valid time format for timeslot 2.',
+            
+            'timeslot_2_end.required' => 'Timeslot 2 end time is required.',
+            'timeslot_2_end.date_format' => 'Please enter a valid time format for timeslot 2.',
+            'timeslot_2_end.after' => 'Timeslot 2 end time must be after the start time.',
+            
+            'timeslot_3_start.required' => 'Timeslot 3 start time is required.',
+            'timeslot_3_start.date_format' => 'Please enter a valid time format for timeslot 3.',
+            
+            'timeslot_3_end.required' => 'Timeslot 3 end time is required.',
+            'timeslot_3_end.date_format' => 'Please enter a valid time format for timeslot 3.',
+            'timeslot_3_end.after' => 'Timeslot 3 end time must be after the start time.',
             
             'joining_date.required' => 'Joining date is required.',
             'joining_date.date' => 'Please enter a valid date.',
@@ -79,8 +97,12 @@ class JoinLibraryRequest extends FormRequest
             'address' => 'address',
             'photo' => 'photo',
             'id_proof' => 'ID proof',
-            'timeslot_start' => 'start time',
-            'timeslot_end' => 'end time',
+            'timeslot_1_start' => 'timeslot 1 start time',
+            'timeslot_1_end' => 'timeslot 1 end time',
+            'timeslot_2_start' => 'timeslot 2 start time',
+            'timeslot_2_end' => 'timeslot 2 end time',
+            'timeslot_3_start' => 'timeslot 3 start time',
+            'timeslot_3_end' => 'timeslot 3 end time',
             'joining_date' => 'joining date',
         ];
     }
