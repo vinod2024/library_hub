@@ -15,6 +15,7 @@
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <th scope="col">Role</th>
+            <th scope="col">Status</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -26,7 +27,25 @@
             <td>{{ $user->email }}</td>
             <td>{{ ucfirst($user->role) }}</td>
             <td>
+                @if($user->enabled)
+                    <span class="badge bg-success">Enabled</span>
+                @else
+                    <span class="badge bg-secondary">Disabled</span>
+                @endif
+            </td>
+            <td>
                 <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
+                @if($user->enabled)
+                    <form action="{{ route('admin.users.disable', ['user' => $user->id]) }}" method="POST" style="display:inline-block;">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-warning me-1">Disable</button>
+                    </form>
+                @else
+                    <form action="{{ route('admin.users.enable', ['user' => $user->id]) }}" method="POST" style="display:inline-block;">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-success me-1">Enable</button>
+                    </form>
+                @endif
                 <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this user?');">
                     @csrf
                     @method('DELETE')
