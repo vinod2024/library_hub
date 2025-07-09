@@ -29,10 +29,10 @@ class LibraryJoinController extends Controller
             'id_proof' => $idProofPath,
             'timeslot_1_start' => $validated['timeslot_1_start'],
             'timeslot_1_end' => $validated['timeslot_1_end'],
-            'timeslot_2_start' => $validated['timeslot_2_start'],
-            'timeslot_2_end' => $validated['timeslot_2_end'],
-            'timeslot_3_start' => $validated['timeslot_3_start'],
-            'timeslot_3_end' => $validated['timeslot_3_end'],
+            'timeslot_2_start' => $validated['timeslot_2_start']??null,
+            'timeslot_2_end' => $validated['timeslot_2_end']??null,
+            'timeslot_3_start' => $validated['timeslot_3_start']??null,
+            'timeslot_3_end' => $validated['timeslot_3_end']??null,
             'joining_date' => $validated['joining_date'],
         ]);
 
