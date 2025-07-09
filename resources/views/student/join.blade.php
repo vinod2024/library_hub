@@ -143,8 +143,8 @@
                     </button>
                     <div class="file-requirements">
                         Accepted formats: JPEG, PNG, JPG<br>
-                        Max size: 2MB<br>
-                        Dimensions: 200x200 to 2000x2000 pixels
+                        Max size: 5MB<br>
+                        Dimensions: max 2000x2000 pixels
                     </div>
                     <div id="photoPreview"></div>
                     <div id="photoValidation"></div>
@@ -163,8 +163,9 @@
                         <i class="bi bi-upload me-1"></i>Choose ID Proof
                     </button>
                     <div class="file-requirements">
+                        Accepted ID Proof: Aadhar, PAN, Voter ID, Driving Licence.<br>
                         Accepted formats: JPEG, PNG, JPG, PDF<br>
-                        Max size: 2MB
+                        Max size: 5MB
                     </div>
                     <div id="idProofPreview"></div>
                     <div id="idProofValidation"></div>
@@ -177,21 +178,43 @@
         
         <div class="form-section-title"><i class="bi bi-clock-history"></i>Library Usage</div>
         <div class="row g-3 mb-3">
-            <div class="col-md-4">
-                <label for="timeslot_start" class="form-label">Timeslot Start <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_start') is-invalid @enderror" id="timeslot_start" name="timeslot_start" value="{{ old('timeslot_start') }}" required>
-                @error('timeslot_start')
+            <div class="col-md-6">
+                <label for="timeslot_1_start" class="form-label">Timeslot 1 Start <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_1_start') is-invalid @enderror" id="timeslot_1_start" name="timeslot_1_start" value="{{ old('timeslot_1_start') }}" required>
+                @error('timeslot_1_start')
                     <div class="validation-error">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="col-md-4">
-                <label for="timeslot_end" class="form-label">Timeslot End <span class="text-danger">*</span></label>
-                <input type="time" class="form-control @error('timeslot_end') is-invalid @enderror" id="timeslot_end" name="timeslot_end" value="{{ old('timeslot_end') }}" required>
-                @error('timeslot_end')
+            <div class="col-md-6">
+                <label for="timeslot_1_end" class="form-label">Timeslot 1 End <span class="text-danger">*</span></label>
+                <input type="time" class="form-control @error('timeslot_1_end') is-invalid @enderror" id="timeslot_1_end" name="timeslot_1_end" value="{{ old('timeslot_1_end') }}" required>
+                @error('timeslot_1_end')
                     <div class="validation-error">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
+                <label for="timeslot_2_start" class="form-label">Timeslot 2 Start </label>
+                <input type="time" class="form-control @error('timeslot_2_start') is-invalid @enderror" id="timeslot_2_start" name="timeslot_2_start" value="{{ old('timeslot_2_start') }}" >
+                @error('timeslot_2_start')
+                    <div class="validation-error">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="col-md-6">
+                <label for="timeslot_2_end" class="form-label">Timeslot 2 End  </label>
+                <input type="time" class="form-control" id="timeslot_2_end" name="timeslot_2_end" value="{{ old('timeslot_2_end') }}" >
+                
+            </div>
+            <div class="col-md-6">
+                <label for="timeslot_3_start" class="form-label">Timeslot 3 Start </label>
+                <input type="time" class="form-control" id="timeslot_3_start" name="timeslot_3_start" value="{{ old('timeslot_3_start') }}" >
+                
+            </div>
+            <div class="col-md-6">
+                <label for="timeslot_3_end" class="form-label">Timeslot 3 End </label>
+                <input type="time" class="form-control" id="timeslot_3_end" name="timeslot_3_end" value="{{ old('timeslot_3_end') }}" >
+                
+            </div>
+            <div class="col-md-6">
                 <label for="joining_date" class="form-label">Joining Date <span class="text-danger">*</span></label>
                 <input type="date" class="form-control @error('joining_date') is-invalid @enderror" id="joining_date" name="joining_date" value="{{ old('joining_date') }}" required>
                 @error('joining_date')
@@ -211,10 +234,48 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Set minimum date for joining_date to today
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('joining_date').min = today;
+    // document.getElementById('joining_date').min = today;
     
     let isPhotoValid = false;
 
+    // --- Add image resize helper ---
+    function resizeImage(file, maxWidth, maxHeight, callback) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+                // Calculate new dimensions
+                if (width > maxWidth || height > maxHeight) {
+                    if (width / height > maxWidth / maxHeight) {
+                        height = Math.round(height * (maxWidth / width));
+                        width = maxWidth;
+                    } else {
+                        width = Math.round(width * (maxHeight / height));
+                        height = maxHeight;
+                    }
+                }
+                // Create canvas and draw image
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                // Convert canvas to Blob
+                canvas.toBlob(function(blob) {
+                    // Create a new File object
+                    const resizedFile = new File([blob], file.name, { type: file.type });
+                    callback(resizedFile, canvas.toDataURL(file.type));
+                }, file.type, 0.95); // 0.95 quality
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+    // --- End image resize helper ---
+
+    // --- Update validatePhoto to use resizeImage ---
     function validatePhoto(file) {
         const container = document.getElementById('photoContainer');
         const validation = document.getElementById('photoValidation');
@@ -235,41 +296,38 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        // Check file size (2MB = 2 * 1024 * 1024 bytes)
-        if (file.size > 2 * 1024 * 1024) {
-            validation.innerHTML = '<div class="validation-error">File size must not exceed 2MB</div>';
+        // Check file size (5MB = 5 * 1024 * 1024 bytes)
+        if (file.size > 5 * 1024 * 1024) {
+            validation.innerHTML = '<div class="validation-error">File size must not exceed 5MB</div>';
             return false;
         }
-        
-        // Check image dimensions (async)
-        const img = new Image();
-        img.onload = function() {
-            if (parseInt(this.width) > 1500 || parseInt(this.height) > 1500 ) {
-                validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 1500x1500 pixels</div>';
-                container.classList.remove('has-file');
-                preview.innerHTML = '';
-                isPhotoValid = false;
-            } else {
-                validation.innerHTML = '<div class="validation-success">✓ Photo validated successfully</div>';
-                container.classList.add('has-file');
-                // Show preview only if valid
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.innerHTML = `<img src="${e.target.result}" class="file-preview" alt="Photo preview">`;
-                };
-                reader.readAsDataURL(file);
-                isPhotoValid = true;
-            }
-        };
-        img.onerror = function() {
-            validation.innerHTML = '<div class="validation-error">Could not load image for validation</div>';
-            isPhotoValid = false;
-        };
-        img.src = URL.createObjectURL(file);
-        
-        // Do not show preview here; only after dimension check
+
+        // Resize image before preview and validation
+        resizeImage(file, 200, 280, function(resizedFile, dataUrl) {
+            // Check dimensions again (should be <= 2000x2000)
+            const img = new Image();
+            img.onload = function() {
+                if (this.width > 2000 || this.height > 2000) {
+                    validation.innerHTML = '<div class="validation-error">Image dimensions must be less than 2000x2000 pixels</div>';
+                    container.classList.remove('has-file');
+                    preview.innerHTML = '';
+                    isPhotoValid = false;
+                } else {
+                    validation.innerHTML = '<div class="validation-success">✓ Photo validated and resized successfully</div>';
+                    container.classList.add('has-file');
+                    preview.innerHTML = `<img src="${dataUrl}" class="file-preview" alt="Photo preview">`;
+                    isPhotoValid = true;
+                    // Replace the file in the input with the resized file
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(resizedFile);
+                    document.getElementById('photo').files = dataTransfer.files;
+                }
+            };
+            img.src = dataUrl;
+        });
         return true;
     }
+    // --- End update validatePhoto ---
     
     function validateIdProof(file) {
         const container = document.getElementById('idProofContainer');
@@ -293,8 +351,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Check file size (2MB = 2 * 1024 * 1024 bytes)
-        if (file.size > 2 * 1024 * 1024) {
-            validation.innerHTML = '<div class="validation-error">File size must not exceed 2MB</div>';
+        if (file.size > 5 * 1024 * 1024) {
+            validation.innerHTML = '<div class="validation-error">File size must not exceed 5MB</div>';
             return false;
         }
         

@@ -84,6 +84,7 @@
                     <h4 class="card-title mb-1">{{ ucwords($studentProfile->user->name) ?? '-' }}</h4>
                     <!-- <p class="mb-1"><span class="badge bg-info text-dark">Student</span></p> -->
                     <ul class="list-unstyled mb-0 text-secondary">
+                        <li><i class="bi bi-person-circle me-2"></i> {{ $studentProfile->register_no ?? '-' }}</li>
                         <li><i class="bi bi-telephone me-2"></i> {{ $studentProfile->mobile ?? '-' }}</li>
                         <li><i class="bi bi-envelope me-2"></i> {{ $studentProfile->user->email ?? '-' }}</li>
                         <li><i class="bi bi-paypal me-2"></i> {{ Carbon\Carbon::parse($studentProfile->joining_date)->addMonth()->subDay()->format('d-m-Y') }}</li>
@@ -99,9 +100,11 @@
                 <h5 class="card-title mb-3"><i class="bi bi-chair me-2"></i>Seat Information</h5>
                 <ul class="list-unstyled text-secondary mb-0">
                     <li><i class="bi bi-123 me-2"></i><strong>Seat Number:</strong> {{ $studentProfile->seat->number ?? 'Not Assigned' }}</li>
-                    @if(!empty($studentProfile->timeslot_start))
-                        <li><i class="bi bi-clock me-2"></i><strong>Timeslot:</strong> {{ Carbon\Carbon::parse($studentProfile->timeslot_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($studentProfile->timeslot_end)->format('h:i A') }}</li>
-                    @endif
+                    <li><i class="bi bi-clock me-2"></i><strong>Timeslots:</strong><br>
+                        1: {{ $studentProfile->timeslot_1_start ? Carbon\Carbon::parse($studentProfile->timeslot_1_start)->format('h:i A') : '-' }} - {{ $studentProfile->timeslot_1_end ? Carbon\Carbon::parse($studentProfile->timeslot_1_end)->format('h:i A') : '-' }}<br>
+                        2: {{ $studentProfile->timeslot_2_start ? Carbon\Carbon::parse($studentProfile->timeslot_2_start)->format('h:i A') : '-' }} - {{ $studentProfile->timeslot_2_end ? Carbon\Carbon::parse($studentProfile->timeslot_2_end)->format('h:i A') : '-' }}<br>
+                        3: {{ $studentProfile->timeslot_3_start ? Carbon\Carbon::parse($studentProfile->timeslot_3_start)->format('h:i A') : '-' }} - {{ $studentProfile->timeslot_3_end ? Carbon\Carbon::parse($studentProfile->timeslot_3_end)->format('h:i A') : '-' }}
+                    </li>
                     <li><i class="bi bi-calendar-event me-2"></i><strong>Join Date:</strong> {{ Carbon\Carbon::parse($studentProfile->joining_date)->format('d-m-Y') }}</li>
                 </ul>
             </div>
