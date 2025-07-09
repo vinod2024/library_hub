@@ -16,13 +16,13 @@ class DashboardController extends Controller
         $totalStudents = User::where('role', 'student')->count();
         $totalSeats = Seat::count();
         $vacantSeats = Seat::where('status', 'vacant')->where('is_reserved', '0')->count();
-        $vacantSeatsList = Seat::where('status', 'vacant')->where('is_reserved', 0)->orderBy('number', 'asc')->get();
+        $vacantSeatsList = Seat::where('status', 'vacant')->where('is_reserved', 0)->orderBy('sort_by', 'asc')->get();
         // Group by first letter
         $groupedVacantSeats = $vacantSeatsList->groupBy(function($seat) {
             return strtoupper(substr($seat->number, 0, 1));
         });
         // Reserved seats block
-        $reservedSeatsList = Seat::where('is_reserved', 1)->orderBy('number', 'asc')->get();
+        $reservedSeatsList = Seat::where('is_reserved', 1)->orderBy('sort_by', 'asc')->get();
         $groupedReservedSeats = $reservedSeatsList->groupBy(function($seat) {
             return strtoupper(substr($seat->number, 0, 1));
         });
@@ -32,7 +32,7 @@ class DashboardController extends Controller
     public function getVacantSeats()
     {
         $vacantSeats = Seat::where('status', 'vacant')->where('is_reserved', 0)->count();
-        $vacantSeatsList = Seat::where('status', 'vacant')->where('is_reserved', 0)->orderBy('number', 'asc')->get();
+        $vacantSeatsList = Seat::where('status', 'vacant')->where('is_reserved', 0)->orderBy('sort_by', 'asc')->get();
         // Group by first letter
         $groupedVacantSeats = $vacantSeatsList->groupBy(function($seat) {
             return strtoupper(substr($seat->number, 0, 1));
