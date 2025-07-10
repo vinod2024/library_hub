@@ -9,9 +9,9 @@ Route::get('/', function () {
 
 });
 
-Route::get('/dashboard', function () {
+/* Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard'); */
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -45,6 +45,11 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('/join', [App\Http\Controllers\Student\LibraryJoinController::class, 'showForm'])->name('join.form');
     Route::post('/join', [App\Http\Controllers\Student\LibraryJoinController::class, 'submitForm'])->name('join.submit');
     Route::get('/profile', [App\Http\Controllers\Student\DashboardController::class, 'profile'])->name('profile');
+    
+    // Timesheet routes if student is not assigned to any seat. or refresh the page
+    Route::get('/check-in', function(){
+        return redirect()->route('student.dashboard');
+    });
     Route::post('/check-in', [App\Http\Controllers\Student\TimesheetController::class, 'checkIn'])->name('checkin');
     Route::post('/check-out', [App\Http\Controllers\Student\TimesheetController::class, 'checkOut'])->name('checkout');
     
