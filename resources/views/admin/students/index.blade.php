@@ -12,7 +12,7 @@
     <thead class="table-primary">
         <tr>
             <th scope="col">ID</th>
-            <th scope="col">Photo</th>
+            <th scope="col">Student Details</th>
             <th scope="col">Seat</th>
             <th scope="col">Timeslot</th>
             <th scope="col">Actions</th>
@@ -39,6 +39,13 @@
                             <li><i class="bi bi-person-circle me-2"></i> {{ $student->register_no ?? '-' }}</li>
                             <li><i class="bi bi-telephone me-2"></i> {{ $student->mobile ?? '-' }}</li>
                             <li><i class="bi bi-envelope me-2"></i> {{ $student->user->email ?? '-' }}</li>
+                            <li><i class="bi bi-person-vcard me-2"></i>
+                                <a href="{{ asset('storage/' . $student->id_proof) }}" target="_blank">
+                                    ID Proof
+                                </a> 
+                            </li>
+                           
+
                         </ul>
                     </div>
                 </div>
@@ -58,7 +65,7 @@
                 <form action="{{ route('admin.students.destroy', $student->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this student?');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger" disabled>Delete</button>
+                    <button type="submit" class="btn btn-sm btn-danger" >Delete</button>
                 </form>
             </td>
         </tr>
