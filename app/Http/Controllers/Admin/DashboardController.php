@@ -13,7 +13,9 @@ class DashboardController extends Controller
     public function index()
     {
         $totalUsers = User::count();
-        $totalStudents = User::where('role', 'student')->count();
+        // $totalStudents = User::where('role', 'student')->count();
+
+        $totalStudents = StudentProfile::count();
         $totalSeats = Seat::count();
         $vacantSeats = Seat::where('status', 'vacant')->where('is_reserved', '0')->count();
         $vacantSeatsList = Seat::where('status', 'vacant')->where('is_reserved', 0)->orderBy('sort_by', 'asc')->get();

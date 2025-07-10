@@ -82,12 +82,20 @@ class StudentController extends Controller
             $seat->save();
         }
 
-        return redirect()->route('admin.students.index')->with('success', 'Student updated successfully.');
+        return redirect()->route('admin.students.index')->with('success', 'Student data updated successfully.');
     }
     public function destroy($id)
     {
         $student = StudentProfile::findOrFail($id);
         $student->delete();
-        return redirect()->route('admin.students.index')->with('success', 'Student deleted successfully.');
+
+        // Update seat status
+        $seat = Seat::find($student->seat_id);
+        $seat->status = 'vacant';
+        $seat->assigned_to = null;
+        $seat->is_reserved = 0;
+        $seat->save();
+
+        return redirect()->route('admin.students.index')->with('success', 'Student data deleted successfully.');
     }
 } 
