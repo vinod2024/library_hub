@@ -195,17 +195,20 @@
         <div class="card shadow-sm border-0">
             <div class="card-header bg-warning-subtle d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-lock-fill me-2"></i>Reserved Seats</h5>
+                <span class="ms-2">
+                    <span class="badge bg-success-subtle border border-success text-success">Checked-in</span>
+                    <span class="badge bg-warning-subtle border border-warning text-warning">Reserved</span>
+                </span>
             </div>
             <div class="card-body">
                 <div id="reserved-seats-content">
                     <div class="row g-1">
                         @forelse($groupedReservedSeats ?? [] as $letter => $seats)
-                            
                             @foreach($seats as $seat)
                                 <div class="col-md-1 col-sm-1 col-2 col-3">
-                                    <div class="card border-warning text-center" style="min-height: 40px;">
+                                    <div class="card text-center {{ $seat->is_checked_in ? 'border-success bg-success-subtle' : 'border-warning bg-warning-subtle' }}" style="min-height: 40px;">
                                         <div class="card-body py-1 px-0">
-                                            <div class="fw-bold text-warning" style="font-size: 0.9rem;">{{ $seat->number }}</div>
+                                            <div class="fw-bold {{ $seat->is_checked_in ? 'text-success' : 'text-warning' }}" style="font-size: 0.9rem;">{{ $seat->number }}</div>
                                         </div>
                                     </div>
                                 </div>

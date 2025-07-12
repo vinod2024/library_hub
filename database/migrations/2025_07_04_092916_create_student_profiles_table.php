@@ -23,6 +23,7 @@ return new class extends Migration
             $table->time('timeslot_start');
             $table->time('timeslot_end');
             $table->date('joining_date');
+            $table->date('payment_due_date')->nullable();
             $table->unsignedBigInteger('seat_id')->nullable();
             $table->timestamps();
 
