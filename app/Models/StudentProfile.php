@@ -41,4 +41,14 @@ class StudentProfile extends Model
     {
         return $this->hasMany(Timesheet::class);
     }
+
+    public function isCurrentlyCheckedIn()
+    {
+        $today = now()->toDateString();
+        $timesheet = $this->timesheets()
+            ->where('date', $today)
+            ->orderByDesc('id')
+            ->first();
+        return $timesheet && $timesheet->check_in && !$timesheet->check_out;
+    }
 }

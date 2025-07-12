@@ -24,7 +24,15 @@ class DashboardController extends Controller
             return strtoupper(substr($seat->number, 0, 1));
         });
         // Reserved seats block
-        $reservedSeatsList = Seat::where('is_reserved', 1)->orderBy('sort_by', 'asc')->get();
+        $reservedSeatsList = Seat::where('is_reserved', 1)
+            ->with('studentProfile')
+            ->orderBy('sort_by', 'asc')
+            ->get();
+        // Add a flag for checked-in status
+        $reservedSeatsList->map(function($seat) {
+            $seat->is_checked_in = $seat->studentProfile && $seat->studentProfile->isCurrentlyCheckedIn();
+            return $seat;
+        });
         $groupedReservedSeats = $reservedSeatsList->groupBy(function($seat) {
             return strtoupper(substr($seat->number, 0, 1));
         });
