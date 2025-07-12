@@ -5,28 +5,40 @@
     <form action="{{ route('admin.students.update', $student->id) }}" method="POST" class="card p-4 shadow-sm">
         @csrf
         @method('PUT')
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $student->user->name ?? '') }}" required>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $student->user->name ?? '') }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="mobile" class="form-label">Mobile</label>
+                <input type="text" class="form-control" id="mobile" name="mobile" value="{{ old('mobile', $student->mobile) }}" required>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="mobile" class="form-label">Mobile</label>
-            <input type="text" class="form-control" id="mobile" name="mobile" value="{{ old('mobile', $student->mobile) }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="seat_id" class="form-label">Seat</label>
-            <select class="form-select" id="seat_id" name="seat_id">
-                <option value="">Unassigned</option>
-                @foreach($seats as $seat)
-                    <option 
-                        value="{{ $seat->id }}" 
-                        {{ $student->seat && $student->seat->id == $seat->id ? 'selected' : '' }}
-                        @if($seat->is_reserved) style="background-color: #ffe5e5; color: #d9534f;" @endif
-                    >
-                        {{ $seat->number }}@if($seat->is_reserved) (Reserved)@endif
-                    </option>
-                @endforeach
-            </select>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="seat_id" class="form-label">Seat</label>
+                <select class="form-select" id="seat_id" name="seat_id">
+                    <option value="">Unassigned</option>
+                    @foreach($seats as $seat)
+                        <option 
+                            value="{{ $seat->id }}" 
+                            {{ $student->seat && $student->seat->id == $seat->id ? 'selected' : '' }}
+                            @if($seat->is_reserved) style="background-color: #ffe5e5; color: #d9534f;" @endif
+                        >
+                            {{ $seat->number }}@if($seat->is_reserved) (Reserved)@endif
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-6 mb-3 d-flex align-items-end">
+                <div class="form-check">
+                    <input class="form-check-input " type="checkbox" id="reserve_seat" name="reserve_seat" value="1" {{ $student->seat && $student->seat->is_reserved ? 'checked' : '' }}>
+                    <label class="form-check-label" for="reserve_seat">
+                        Reserve this seat
+                    </label>
+                </div>
+            </div>
         </div>
         <div class="mb-3">
             <label for="register_no" class="form-label">Register No</label>

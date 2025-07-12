@@ -42,6 +42,7 @@ class StudentController extends Controller
             'timeslot_2_end' => 'nullable',
             'timeslot_3_start' => 'nullable',
             'timeslot_3_end' => 'nullable',
+            'reserve_seat' => 'nullable|boolean',
         ]);
 
         // Update user name if available
@@ -78,7 +79,7 @@ class StudentController extends Controller
             $seat = Seat::find($validated['seat_id']);
             $seat->status = 'occupied';
             $seat->assigned_to = $id;
-            $seat->is_reserved = 1;
+            $seat->is_reserved = $validated['reserve_seat'] ?? 0;
             $seat->save();
         }
 
