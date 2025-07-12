@@ -59,6 +59,23 @@
                 @else
                     --
                 @endif
+                @if($student->payment_due_date)
+                    @php
+                        $dueDate = \Carbon\Carbon::parse($student->payment_due_date);
+                        $today = \Carbon\Carbon::today();
+                        $diff = $today->diffInDays($dueDate, false);
+                        $bgClass = '';
+                        if ($dueDate->isSameDay($today)) {
+                            $bgClass = 'bg-danger text-white';
+                        } elseif ($diff > 0 && $diff <= 2) {
+                            $bgClass = 'bg-warning text-dark';
+                        }
+                    @endphp
+                    <div class="mt-1 p-1 rounded {{ $bgClass }}">
+                        <i class="bi bi-calendar-event me-1" title="Payment Due Date"></i>
+                        {{ $dueDate->format('d M Y') }}
+                    </div>
+                @endif
             </td>
             <td>
                 Slot 1: {{ Carbon\Carbon::parse($student->timeslot_1_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_1_end)->format('h:i A') }}<br>

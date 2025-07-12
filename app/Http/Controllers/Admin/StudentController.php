@@ -11,7 +11,7 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = StudentProfile::with(['user', 'seat'])->get();
+        $students = StudentProfile::with(['user', 'seat'])->orderBy('payment_due_date', 'asc')->get();
         return view('admin.students.index', compact('students'));
     }
     public function create() {}
