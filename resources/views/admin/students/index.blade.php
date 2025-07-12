@@ -50,7 +50,16 @@
                     </div>
                 </div>
             </td>
-            <td>{{ $student->seat->number ?? '--' }}</td>
+            <td>
+                @if($student->seat)
+                    {{ $student->seat->number }}
+                    @if($student->seat->is_reserved)
+                        <i class="bi bi-lock-fill text-warning ms-1" title="Reserved Seat"></i>
+                    @endif
+                @else
+                    --
+                @endif
+            </td>
             <td>
                 Slot 1: {{ Carbon\Carbon::parse($student->timeslot_1_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_1_end)->format('h:i A') }}<br>
                 @if($student->timeslot_2_start)
