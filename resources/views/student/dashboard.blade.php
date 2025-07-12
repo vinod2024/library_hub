@@ -87,7 +87,7 @@
                         <li><i class="bi bi-person-circle me-2"></i> {{ $studentProfile->register_no ?? '-' }}</li>
                         <li><i class="bi bi-telephone me-2"></i> {{ $studentProfile->mobile ?? '-' }}</li>
                         <!-- <li><i class="bi bi-envelope me-2"></i> {{ $studentProfile->user->email ?? '-' }}</li> -->
-                        <li><i class="bi bi-paypal me-2"></i> {{ Carbon\Carbon::parse($studentProfile->joining_date)->addMonth()->subDay()->format('d-m-Y') }}</li>
+                        <li><i class="bi bi-paypal me-2"></i> {{ Carbon\Carbon::parse($studentProfile->payment_due_date)->format('d-m-Y') }}</li>
                     </ul>
                 </div>
             </div>
@@ -184,4 +184,32 @@
 <!-- Add more widgets as needed -->
 <!-- Bootstrap Icons CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+@if(isset($showPaymentDuePopup) && $showPaymentDuePopup)
+<!-- Payment Due Modal -->
+<div class="modal fade" id="paymentDueModal" tabindex="-1" aria-labelledby="paymentDueModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="paymentDueModalLabel"><i class="bi bi-exclamation-triangle me-2"></i>Payment Due</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Please make the payment to continue enjoying library services.</p>
+        @if($studentProfile->payment_due_date)
+        <p><strong>Due Date:</strong> {{ $studentProfile->payment_due_date->format('d-m-Y') }}</p>
+        @endif
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var paymentDueModal = new bootstrap.Modal(document.getElementById('paymentDueModal'));
+        paymentDueModal.show();
+    });
+</script>
+@endif
 @endsection 
