@@ -13,7 +13,7 @@
         <tr>
             <th scope="col">ID</th>
             <th scope="col">Student Details</th>
-            <th scope="col">Seat</th>
+            <th scope="col">Seat / Payment Date</th>
             <th scope="col">Timeslot</th>
             <th scope="col">Actions</th>
         </tr>
@@ -54,7 +54,7 @@
                 @if($student->seat)
                     {{ $student->seat->number }}
                     @if($student->seat->is_reserved)
-                        <i class="bi bi-lock-fill text-warning ms-1" title="Reserved Seat"></i>
+                        <i class="bi bi-lock-fill text-secondary ms-1" title="Reserved Seat"></i>
                     @endif
                 @else
                     --
@@ -78,12 +78,12 @@
                 @endif
             </td>
             <td>
-                Slot 1: {{ Carbon\Carbon::parse($student->timeslot_1_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_1_end)->format('h:i A') }}<br>
+                <span class="badge bg-secondary text-white mb-1">Slot 1: {{ Carbon\Carbon::parse($student->timeslot_1_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_1_end)->format('h:i A') }}</span><br>
                 @if($student->timeslot_2_start)
-                Slot 2: {{ Carbon\Carbon::parse($student->timeslot_2_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_2_end)->format('h:i A') }}<br>
+                <span class="badge bg-success text-white mb-1">Slot 2: {{ Carbon\Carbon::parse($student->timeslot_2_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_2_end)->format('h:i A') }}</span><br>
                 @endif
                 @if($student->timeslot_3_start)
-                Slot 3: {{ Carbon\Carbon::parse($student->timeslot_3_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_3_end)->format('h:i A') }}
+                <span class="badge bg-warning text-dark mb-1">Slot 3: {{ Carbon\Carbon::parse($student->timeslot_3_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_3_end)->format('h:i A') }}</span>
                 @endif
             </td>
             <td>
@@ -93,6 +93,7 @@
                     @method('DELETE')
                     <button type="submit" class="btn btn-sm btn-danger" >Delete</button>
                 </form>
+                <button type="button" class="btn btn-sm btn-success pay-now-btn" data-student-id="{{ $student->id }}">Pay Now</button>
             </td>
         </tr>
         @endforeach
@@ -100,3 +101,85 @@
 </table>
 </div>
 @endsection 
+
+@push('modals')
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentModalLabel">Student Payment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="paymentModalBody">
+        <!-- Payment form will be loaded here -->
+        <div class="text-center py-5">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Success Toast -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+  <div id="paymentSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="paymentSuccessToastBody">
+        Payment record saved successfully.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+@endpush
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('.pay-now-btn').on('click', function() {
+        var studentId = $(this).data('student-id');
+        $('#paymentModalBody').html('<div class="text-center py-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+        $('#paymentModal').modal('show');
+        $.get('/admin/students/' + studentId + '/payment-form', function(data) {
+            $('#paymentModalBody').html(data);
+        });
+    });
+
+    // Delegate submit for dynamically loaded form
+    $(document).on('submit', '#studentPaymentForm', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var studentId = form.data('student-id');
+        var formData = form.serialize();
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.invalid-feedback').remove();
+        $.ajax({
+            url: '/admin/students/' + studentId + '/payment',
+            method: 'POST',
+            data: formData,
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success: function(response) {
+                $('#paymentModal').modal('hide');
+                // Show toast with success message
+                $('#paymentSuccessToastBody').text(response.message || 'Payment record saved successfully.');
+                var toast = new bootstrap.Toast(document.getElementById('paymentSuccessToast'));
+                toast.show();
+                setTimeout(function() { location.reload(); }, 1200);
+            },
+            error: function(xhr) {
+                if(xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        var input = form.find('[name="' + key + '"]');
+                        input.addClass('is-invalid');
+                        input.after('<div class="invalid-feedback">' + value[0] + '</div>');
+                    });
+                }
+            }
+        });
+    });
+});
+</script>
+@endpush 

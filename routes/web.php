@@ -36,6 +36,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Vacant seats API route
     Route::get('/vacant-seats', [App\Http\Controllers\Admin\DashboardController::class, 'getVacantSeats'])->name('vacant-seats.api');
     
+    // Student Payment routes
+    Route::get('students/{student}/payment-form', [\App\Http\Controllers\Admin\StudentPaymentController::class, 'showForm'])->name('admin.students.payment-form');
+    Route::post('students/{student}/payment', [\App\Http\Controllers\Admin\StudentPaymentController::class, 'storeOrUpdate'])->name('admin.students.payment.store');
     
 });
 
