@@ -36,6 +36,7 @@ class StudentController extends Controller
             'mobile' => 'required|string|max:20',
             'seat_id' => 'nullable|exists:seats,id',
             'register_no' => 'required|string|max:255',
+            'joining_date' => 'nullable|date',
             'timeslot_1_start' => 'required',
             'timeslot_1_end' => 'required',
             'timeslot_2_start' => 'nullable',
@@ -55,6 +56,7 @@ class StudentController extends Controller
         $student->mobile = $validated['mobile'];
         $student->seat_id = $validated['seat_id'] ?? null;
         $student->register_no = $validated['register_no'];
+        $student->joining_date = $validated['joining_date'] ?? null;
         $student->timeslot_1_start = $validated['timeslot_1_start'];
         $student->timeslot_1_end = $validated['timeslot_1_end'];
         $student->timeslot_2_start = $validated['timeslot_2_start'] ?? null;
