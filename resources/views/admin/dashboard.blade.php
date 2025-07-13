@@ -116,6 +116,17 @@
             </div>
         </div>
     </div>
+
+     <!-- Total Seats Widget -->
+     <div class="col-md-3 col-6">
+        <div class="card shadow-sm border-0 text-center bg-success-subtle">
+            <div class="card-body">
+                <div class="mb-2"><i class="bi bi-grid-3x3-gap-fill text-success" style="font-size:2rem;"></i></div>
+                <h5 class="card-title">Total Seats</h5>
+                <div class="display-6 fw-bold">{{ $totalSeats ?? '0' }}</div>
+            </div>
+        </div>
+    </div>
     <!-- Total Students Widget -->
     <div class="col-md-3 col-6">
         <div class="card shadow-sm border-0 text-center bg-info-subtle">
@@ -126,16 +137,7 @@
             </div>
         </div>
     </div>
-    <!-- Total Seats Widget -->
-    <div class="col-md-3 col-6">
-        <div class="card shadow-sm border-0 text-center bg-success-subtle">
-            <div class="card-body">
-                <div class="mb-2"><i class="bi bi-grid-3x3-gap-fill text-success" style="font-size:2rem;"></i></div>
-                <h5 class="card-title">Total Seats</h5>
-                <div class="display-6 fw-bold">{{ $totalSeats ?? '0' }}</div>
-            </div>
-        </div>
-    </div>
+   
     <!-- Vacant Seats Widget -->
     <div class="col-md-3 col-6">
         <div class="card shadow-sm border-0 text-center bg-warning-subtle">
