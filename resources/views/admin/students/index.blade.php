@@ -72,7 +72,7 @@
                         $today = \Carbon\Carbon::today();
                         $diff = $today->diffInDays($dueDate, false);
                         $bgClass = '';
-                        if ($dueDate->isSameDay($today)) {
+                        if ($dueDate->lt($today) || $dueDate->isSameDay($today)) {
                             $bgClass = 'bg-danger text-white';
                         } elseif ($diff > 0 && $diff <= 2) {
                             $bgClass = 'bg-warning text-dark';
