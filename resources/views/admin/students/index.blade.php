@@ -52,12 +52,19 @@
             </td>
             <td>
                 @if($student->seat)
-                    {{ $student->seat->number }}
+                    Seat: {{ $student->seat->number }}
                     @if($student->seat->is_reserved)
                         <i class="bi bi-lock-fill text-secondary ms-1" title="Reserved Seat"></i>
                     @endif
                 @else
                     --
+                @endif
+                @if($student->joining_date)
+                    <div class="mt-1 p-1 rounded text-success">
+                        <i class="bi bi-calendar-event me-1" title="Joining Date"></i>
+                        Joining:
+                        {{ Carbon\Carbon::parse($student->joining_date)->format('d M Y') }}
+                    </div>
                 @endif
                 @if($student->payment_due_date)
                     @php
@@ -76,6 +83,8 @@
                         {{ $dueDate->format('d M Y') }}
                     </div>
                 @endif
+
+                
             </td>
             <td>
                 <span class="badge bg-secondary text-white mb-1">Slot 1: {{ Carbon\Carbon::parse($student->timeslot_1_start)->format('h:i A') }} - {{ Carbon\Carbon::parse($student->timeslot_1_end)->format('h:i A') }}</span><br>
