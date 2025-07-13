@@ -40,9 +40,15 @@
                 </div>
             </div>
         </div>
-        <div class="mb-3">
-            <label for="register_no" class="form-label">Register No</label>
-            <input type="text" class="form-control" id="register_no" name="register_no" value="{{ old('register_no', $student->register_no) }}" required>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="register_no" class="form-label">Register No</label>
+                <input type="text" class="form-control" id="register_no" name="register_no" value="{{ old('register_no', $student->register_no) }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="joining_date" class="form-label">Joining Date</label>
+                <input type="date" class="form-control" id="joining_date" name="joining_date" value="{{ old('joining_date', $student->joining_date ? $student->joining_date->format('Y-m-d') : '') }}">
+            </div>
         </div>
         <div class="mb-3 row">
             <div class="col-md-6">

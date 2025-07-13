@@ -61,7 +61,7 @@
                 @endif
                 @if($student->joining_date)
                     <div class="mt-1 p-1 rounded text-success">
-                        <i class="bi bi-calendar-event me-1" title="Joining Date"></i>
+                        <i class="bi bi-calendar-plus me-1" title="Joining Date"></i>
                         Joining:
                         {{ Carbon\Carbon::parse($student->joining_date)->format('d M Y') }}
                     </div>
