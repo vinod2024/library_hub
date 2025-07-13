@@ -18,7 +18,14 @@ class DashboardController extends Controller
             return redirect()->route('student.join.form');
         }
 
-        return view('student.dashboard', compact('studentProfile'));
+        // Show popup only if session flag is set (after login)
+        $showPaymentDuePopup = false;
+        if (session('show_payment_due_popup')) {
+            $showPaymentDuePopup = true;
+            session()->forget('show_payment_due_popup');
+        }
+
+        return view('student.dashboard', compact('studentProfile', 'showPaymentDuePopup'));
     }
 
     public function profile()
