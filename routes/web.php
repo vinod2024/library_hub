@@ -6,7 +6,21 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     // return view('welcome');
     // return redirect()->route('login');
-    return redirect()->route('student.dashboard');
+    
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role === 'student') {
+            return redirect()->route('student.dashboard');
+        } else {
+            return redirect()->route('login');
+        }
+
+        return redirect()->route('login');
+    }
+    return redirect()->route('login');
 });
 
 /* Route::get('/dashboard', function () {
