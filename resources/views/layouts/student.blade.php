@@ -97,5 +97,55 @@
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/profile', {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (response.redirected || response.status === 401) {
+            window.location.href = '/login';
+        }
+    })
+    .catch(error => {
+        window.location.href = '/login';
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('form').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            // Only check for forms that have a CSRF token
+            if (form.querySelector('input[name="_token"]')) {
+                e.preventDefault();
+                fetch('/profile', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (response.redirected || response.status === 401) {
+                        // Session expired, reload the page to refresh CSRF tokens or redirect to login
+                        window.location.reload(true);
+                    } else {
+                        // Session valid, submit the form
+                        form.submit();
+                    }
+                })
+                .catch(error => {
+                    window.location.reload(true);
+                });
+            }
+        }, { once: true }); // Only attach once per form
+    });
+});
+</script>
 </body>
 </html> 
