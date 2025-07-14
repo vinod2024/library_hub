@@ -30,8 +30,9 @@ class FreeSeat extends Command
             DB::beginTransaction();
             // free seat
             DB::table('seats')
-                ->where('status', 'occupied')
-                ->orWhereNotNull('assigned_to')
+                ->where('is_reserved',0)
+                // ->where('status', 'occupied')
+                // ->orWhereNotNull('assigned_to')
                 ->update(['status' => 'vacant', 'assigned_to' => null]);
 
             // update checkout in timesheet
@@ -42,8 +43,10 @@ class FreeSeat extends Command
 
             // update student profile.
             DB::table('student_profiles')
-                ->whereNotNull('seat_id')
-                ->update(['seat_id' => null]);
+                ->join('seats', 'student_profiles.seat_id', '=', 'seats.id')
+                // ->whereNotNull('seat_id')
+                ->where('seats.is_reserved',0)
+                ->update(['student_profiles.seat_id' => null]);
 
             DB::commit();
         } catch (\Throwable $th) {
