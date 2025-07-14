@@ -26,5 +26,11 @@
                 {{ $slot }}
             </div>
         </div>
+        <script>
+            // Auto-refresh the page after 15 minutes (900,000 ms)
+            setTimeout(function() {
+                window.location.reload(true);
+            }, 6600000);
+        </script>
     </body>
 </html>
