@@ -16,6 +16,10 @@
             <option value="occupied">Occupied</option>
         </select>
     </div>
+    <div class="mb-3">
+        <label for="sort_by" class="form-label">Sort By</label>
+        <input type="number" class="form-control" id="sort_by" name="sort_by" min="0">
+    </div>
     <button type="submit" class="btn btn-primary">Add Seat</button>
     <a href="{{ route('admin.seats.index') }}" class="btn btn-secondary">Cancel</a>
 </form>

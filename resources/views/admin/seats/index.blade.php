@@ -21,6 +21,7 @@
             <th scope="col">Number</th>
             <th scope="col">Status</th>
             <th scope="col">Assigned To</th>
+            <th scope="col">Sort By</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -37,6 +38,7 @@
                     Vacant
                 @endif
             </td>
+            <td>{{ $seat->sort_by }}</td>
             <td>
                 <a href="{{ route('admin.seats.edit', $seat->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                 <form action="{{ route('admin.seats.destroy', $seat->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this seat?');">

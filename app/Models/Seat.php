@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Seat extends Model
 {
-    protected $fillable = ['number', 'status', 'assigned_to'];
+    protected $fillable = ['number', 'status', 'assigned_to', 'sort_by'];
 
     public function studentProfile()
     {

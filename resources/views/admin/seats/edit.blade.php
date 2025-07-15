@@ -16,6 +16,10 @@
                 <option value="occupied" {{ old('status', $seat->status) == 'occupied' ? 'selected' : '' }}>Occupied</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label for="sort_by" class="form-label">Sort By</label>
+            <input type="number" class="form-control" id="sort_by" name="sort_by" value="{{ old('sort_by', $seat->sort_by) }}" min="0">
+        </div>
         <div class="d-flex justify-content-end">
         <button type="submit" class="btn btn-success btn-sm">Update Seat</button>
         <a href="{{ route('admin.seats.index') }}" class="btn btn-secondary btn-sm ms-2">Cancel</a>

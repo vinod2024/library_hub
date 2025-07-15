@@ -10,7 +10,7 @@ class SeatController extends Controller
 {
     public function index()
     {
-        $seats = Seat::with('studentProfile')->get();
+        $seats = Seat::with('studentProfile')->orderBy('sort_by', 'asc')->get();
         return view('admin.seats.index', compact('seats'));
     }
     public function create() {
@@ -21,6 +21,7 @@ class SeatController extends Controller
         $validated = $request->validate([
             'number' => 'required|string|unique:seats,number',
             'status' => 'required|in:vacant,occupied',
+            'sort_by' => 'nullable|integer',
         ]);
         \App\Models\Seat::create($validated);
         return redirect()->route('admin.seats.index')->with('success', 'Seat added successfully.');
@@ -37,6 +38,7 @@ class SeatController extends Controller
         $validated = $request->validate([
             'number' => 'required|string|unique:seats,number,' . $seat->id,
             'status' => 'required|in:vacant,occupied',
+            'sort_by' => 'nullable|integer',
         ]);
         $seat->update($validated);
         return redirect()->route('admin.seats.index')->with('success', 'Seat updated successfully.');
