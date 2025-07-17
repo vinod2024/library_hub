@@ -76,7 +76,7 @@ class TimesheetController extends Controller
             // dd($availableSeats);
         }else{
             $availableSeats = Seat::where('status', 'vacant')
-                ->whereNull('assigned_to')
+                // ->whereNull('assigned_to')
                 ->where('is_reserved', 0)
                 ->get();
         }    
