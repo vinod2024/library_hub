@@ -24,7 +24,11 @@
         <tr>
             <td>{{ $user->id }}</td>
             <td>{{ $user->name }}</td>
+            @if($adminType == 'admin')
             <td>{{ $user->email }}</td>
+            @else
+            <td>N/A</td>
+            @endif
             <td>{{ ucfirst($user->role) }}</td>
             <td>
                 @if($user->enabled)
@@ -33,6 +37,7 @@
                     <span class="badge bg-secondary">Disabled</span>
                 @endif
             </td>
+            @if($adminType == 'admin')
             <td>
                 <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                 @if($user->enabled)
@@ -52,6 +57,9 @@
                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                 </form>
             </td>
+            @else
+            <td>N/A</td>
+            @endif
         </tr>
         @endforeach
     </tbody>

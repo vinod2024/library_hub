@@ -10,14 +10,23 @@ class UserController extends Controller
 {
     public function index()
     {
+        // check if user is admin
+        $adminType = auth()->user()->id == 1 ? 'admin' : 'manager';
+        
         $users = User::all();
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'adminType'));
     }
     public function create() {}
     public function store(Request $request) {}
     public function show($id) {}
     public function edit($id)
     {
+        // check if user is admin
+        $adminType = auth()->user()->id == 1 ? 'admin' : 'manager';
+        if($adminType == 'manager'){
+            abort(403, 'Unauthorized');
+        }
+
         $user = User::findOrFail($id);
         return view('admin.users.edit', compact('user'));
     }

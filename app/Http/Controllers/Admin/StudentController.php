@@ -11,8 +11,10 @@ class StudentController extends Controller
 {
     public function index()
     {
+        $adminType = auth()->user()->id == 1 ? 'admin' : 'manager';
+
         $students = StudentProfile::with(['user', 'seat'])->orderBy('payment_due_date', 'asc')->get();
-        return view('admin.students.index', compact('students'));
+        return view('admin.students.index', compact('students', 'adminType'));
     }
     public function create() {}
     public function store(Request $request) {
@@ -21,6 +23,11 @@ class StudentController extends Controller
     public function show($id) {}
     public function edit($id)
     {
+        // check if user is admin
+        $adminType = auth()->user()->id == 1 ? 'admin' : 'manager';
+        if($adminType == 'manager'){
+            abort(403, 'Unauthorized');
+        }
         $student = StudentProfile::with(['user', 'seat'])->findOrFail($id);
         // Optionally, load all seats for selection
         $seats = \App\Models\Seat::all();

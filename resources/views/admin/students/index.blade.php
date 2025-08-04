@@ -37,14 +37,16 @@
                         <h5 class="mb-1">{{ ucwords($student->user->name ?? '-') }}</h5>
                         <ul class="list-unstyled mb-0 text-secondary">
                             <li><i class="bi bi-person-circle me-2"></i> {{ $student->register_no ?? '-' }}</li>
+                            @if($adminType == 'admin')
                             <li><i class="bi bi-telephone me-2"></i> {{ $student->mobile ?? '-' }}</li>
+                            
                             <li><i class="bi bi-envelope me-2"></i> {{ $student->user->email ?? '-' }}</li>
                             <li><i class="bi bi-person-vcard me-2"></i>
                                 <a href="{{ asset('storage/' . $student->id_proof) }}" target="_blank">
                                     ID Proof
                                 </a> 
                             </li>
-                           
+                            @endif
 
                         </ul>
                     </div>
@@ -96,6 +98,7 @@
                 @endif
             </td>
             <td>
+                @if($adminType == 'admin')
                 <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                 <form action="{{ route('admin.students.destroy', $student->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this student?');">
                     @csrf
@@ -103,7 +106,10 @@
                     <button type="submit" class="btn btn-sm btn-danger" >Delete</button>
                 </form>
                 <button type="button" class="btn btn-sm btn-success pay-now-btn" data-student-id="{{ $student->id }}">Pay Now</button>
-            </td>
+                @else
+                N/A
+                @endif
+                </td>
         </tr>
         @endforeach
     </tbody>
