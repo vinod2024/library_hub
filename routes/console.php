@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('free:seat')->dailyAt('00:30');
+Schedule::command('app:user-disabled')->dailyAt('00:45');

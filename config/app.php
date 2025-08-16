@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'user_disabled_time' => env('USER_DISABLED_TIME', 5),
+
 ];
