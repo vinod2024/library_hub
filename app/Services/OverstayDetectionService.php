@@ -102,7 +102,7 @@ class OverstayDetectionService
                 ];
 
                 # ----------- Seat free up process started here -----------------#
-                // Update timesheet with check-out time
+                // Update timesheet with check-out time 
                 Timesheet::where('id', $timesheet->id)->update([
                     'check_out' => Carbon::now()->toTimeString(),
                     'status' => 'completed'
