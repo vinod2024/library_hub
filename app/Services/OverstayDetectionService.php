@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\StudentProfile;
 use App\Models\Timesheet;
+use App\Models\Seat;
 use Carbon\Carbon;
 
 class OverstayDetectionService
@@ -99,6 +100,27 @@ class OverstayDetectionService
                     'overstay_minutes' => $overstayMinutes,
                     'overstay_duration' => $this->formatDuration($overstayMinutes)
                 ];
+
+                # ----------- Seat free up process started here -----------------#
+                // Update timesheet with check-out time
+                Timesheet::where('id', $timesheet->id)->update([
+                    'check_out' => Carbon::now()->toTimeString(),
+                    'status' => 'completed'
+                ]);
+
+                // Free up the seat if assigned
+                if ($studentProfile->seat_id) {
+                    $seat = Seat::find($studentProfile->seat_id);
+                    if ($seat) {
+                        $seat->update([
+                            'status' => 'vacant',
+                            'assigned_to' => null
+                        ]);
+                    }
+                    // Remove seat assignment from student profile
+                    $studentProfile->update(['seat_id' => null]);
+                }
+                # ----------- Seat free up process ended here -----------------#
             }
         }
         
