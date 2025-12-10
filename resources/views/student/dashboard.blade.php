@@ -154,6 +154,20 @@
                         $isCheckedOut = $todayTimesheet && $todayTimesheet->check_out;
                     @endphp
                     
+                    @if(empty($studentProfile->register_no))
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="text-danger">Please make the payment to continue enjoying library services.</h5>
+                                <h5 class="text-danger">Contact the library staff.</h5>
+                            </div>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var registerPaymentDueModal = new bootstrap.Modal(document.getElementById('registerPaymentDueModal'));
+                                registerPaymentDueModal.show();
+                            });
+                        </script>
+                    @else
                     <form method="POST" action="{{ route('student.checkin') }}" class="d-inline-block me-2">
                         @csrf
                         <button type="submit" class="btn btn-checkin btn-lg px-4" 
@@ -170,6 +184,7 @@
                             {{ $isCheckedOut ? 'Already Checked Out' : 'Check Out' }}
                         </button>
                     </form>
+                    @endif
                 </div>
             </div>
         </div>
@@ -184,6 +199,28 @@
 <!-- Add more widgets as needed -->
 <!-- Bootstrap Icons CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<div class="modal fade" id="registerPaymentDueModal" tabindex="-1" aria-labelledby="paymentDueModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="paymentDueModalLabel"><i class="bi bi-exclamation-triangle me-2"></i>Payment Due</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Please make the payment to continue enjoying library services.</p>
+        <p>Please contact the library staff.</p>
+        @if($studentProfile->payment_due_date)
+        <p><strong>Due Date:</strong> {{ today()->format('d-m-Y') }}</p>
+        @endif
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @if(isset($showPaymentDuePopup) && $showPaymentDuePopup)
 <!-- Payment Due Modal -->
 <div class="modal fade" id="paymentDueModal" tabindex="-1" aria-labelledby="paymentDueModalLabel" aria-hidden="true">
