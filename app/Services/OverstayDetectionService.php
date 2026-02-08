@@ -100,7 +100,6 @@ class OverstayDetectionService
                     'overstay_minutes' => $overstayMinutes,
                     'overstay_duration' => $this->formatDuration($overstayMinutes)
                 ];
-
                
             }
         }
