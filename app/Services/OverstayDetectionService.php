@@ -101,32 +101,7 @@ class OverstayDetectionService
                     'overstay_duration' => $this->formatDuration($overstayMinutes)
                 ];
 
-               # ----------- Seat free up process started here -----------------#
-               // Update timesheet with check-out time
-                /* if($timesheet->id == 8067){
-
-                    Timesheet::where('id', $timesheet->id)->update([
-                        'check_out' => Carbon::now()->toTimeString(),
-                        'status' => 'completed'
-                    ]);
-
-                    // Free up the seat if assigned
-                    if ($studentProfile->seat->number) {
-                        $studentAssignSeatNo = $studentProfile->seat->number? $studentProfile->seat->number:null;
-                        Seat::where('number', $studentAssignSeatNo)
-                            ->update([
-                                'status' => 'vacant',
-                                'assigned_to' => null,
-                            ]);
-
-                        // Remove seat assignment from student profile
-                        StudentProfile::where('id', $timesheet->idstudent_profile_id)
-                                        ->update(['seat_id' => null]);
-
-                    }               
-
-                } */
-                # ----------- Seat free up process ended here -----------------#
+               
             }
         }
         
