@@ -103,7 +103,7 @@ class OverstayDetectionService
 
                # ----------- Seat free up process started here -----------------#
                // Update timesheet with check-out time
-                if($timesheet->id == 8067){
+                /* if($timesheet->id == 8067){
 
                     Timesheet::where('id', $timesheet->id)->update([
                         'check_out' => Carbon::now()->toTimeString(),
@@ -125,7 +125,7 @@ class OverstayDetectionService
 
                     }               
 
-                }
+                } */
                 # ----------- Seat free up process ended here -----------------#
             }
         }
